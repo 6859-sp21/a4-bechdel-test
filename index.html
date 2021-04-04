@@ -6,9 +6,9 @@
   <body>
     <h1>Your Bechdel Score</h1>
 
-    <div id="chart" style="width:520px;height:420px;">
-      <!-- This is where we will put our chart. -->
-    </div>
+    <!-- <div id="chart" style="width:520px;height:420px;">
+    </div> -->
+    <div id="stats"></div>
 
     <style>
       .selected {
@@ -23,16 +23,24 @@
       // See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
       d3.json("./getAllMovies.json").then((bechdelData) => {
         const data = bechdelData; 
-
+        
         const passingData = data.filter(d => d.rating === 3);
         const passCount = d3.count(passingData, d => d.rating);
         const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 1000 ) / 10; //round to one decimal point 
-        p = document.createElement("p");
-        p.innerHTML = passRate;
-        document.body.appendChild(p);
 
-        const avgRating = d3.create("div");
-        const avgDecade = d3.create("div");
+        const avgRating = d3.mean(data, d => d)
+
+        const abc = [{name: "Pass Rate", value: passRate}];
+        // make a list for all three stats 
+        let container = d3.create('div');
+        container.selectAll('div')
+          .data(abc)
+          .join('div')
+          .text(d => `${d.name}: ${d.value}`);
+
+        document.getElementById("stats").appendChild(container.node())
+        // const avgRating = d3.create("div");
+        // const avgDecade = d3.create("div");
       });
         // // 2. Setting up variables that describe our chart's space.
         // const height = 400;
