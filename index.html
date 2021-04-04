@@ -5,10 +5,11 @@
   </head>
   <body>
     <h1>Your Bechdel Score</h1>
-    
+
     <div id="chart" style="width:520px;height:420px;">
       <!-- This is where we will put our chart. -->
     </div>
+
     <style>
       .selected {
         opacity: 1 !important;
@@ -20,37 +21,29 @@
     <script>
       // Load data from a URL. You can also have the json file downloaded.
       // See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
-      d3.json("https://bechdeltest.com/api/v1/getAllMovies").then((bechdelData) => {
+      d3.json("./getAllMovies.json").then((bechdelData) => {
+        const data = bechdelData; 
 
-        // // 1. Filtering our data to just 1955
-        // const year = 1955;
-        // const data = gapminder.filter(d => d.year === year);
+        const passingData = data.filter(d => d.rating === 3);
+        const passCount = d3.count(passingData, d => d.rating);
+        const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 1000 ) / 10; //round to one decimal point 
+        p = document.createElement("p");
+        p.innerHTML = passRate;
+        document.body.appendChild(p);
 
-        // 2. Setting up variables that describe our chart's space.
-        const height = 400;
-        const width = 500;;
-        const margin = ({top: 10, right: 10, bottom: 20, left: 20});
+        const avgRating = d3.create("div");
+        const avgDecade = d3.create("div");
+      });
+        // // 2. Setting up variables that describe our chart's space.
+        // const height = 400;
+        // const width = 500;;
+        // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
 
-        // // 3. Create a SVG we will use to make our chart.
-        // // See https://developer.mozilla.org/en-US/docs/Web/SVG for more on SVGs.
-        const svg = d3.create('svg')
-          .attr('width', width)
-          .attr('height', height);
-
-        // // 4. Setting up scales.
-        // const xScale = d3.scaleLinear()
-        //   .domain([0, d3.max(gapminder, d => d.fertility)])
-        //   .range([margin.left, width - margin.right])
-        //   .nice();
-
-        // const yScale = d3.scaleLinear()
-        //   .domain([0, d3.max(gapminder, d => d.life_expect)])
-        //   .range([height - margin.bottom, margin.top])
-        //   .nice();
-
-        // const colorScale = d3.scaleOrdinal()
-        //   .domain(gapminder.map(d => d.cluster))
-        //   .range(d3.schemeTableau10); // try other schemes, too!
+        // // // 3. Create a SVG we will use to make our chart.
+        // // // See https://developer.mozilla.org/en-US/docs/Web/SVG for more on SVGs.
+        // const svg = d3.create('svg')
+        //   .attr('width', width)
+        //   .attr('height', height);
 
 
         // // 5. Drawing our points
@@ -259,7 +252,7 @@
         // //add the histogram below the graph
         // document.getElementById("chart").appendChild(svg_histo.node());
 
-      });
+      
 
       </script>
   </body>
