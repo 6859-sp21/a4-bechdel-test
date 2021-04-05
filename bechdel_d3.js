@@ -7,7 +7,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   // Make a list of Movie Names for Search
   movie_names = []
   for (i=0; i<all_data.length; i++) {
-    movie_names.push(all_data[i].title);
+    movie_names.push((all_data[i].title+ ', '+all_data[i].year));
   };
 
   $( "#movie_search_box" ).autocomplete({
