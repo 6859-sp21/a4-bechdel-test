@@ -87,19 +87,18 @@ function make_plot(data) {
     .range(d3.schemeTableau10)
     
   // set the dimensions and margins of the graph
-  var margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 800 - margin.left - margin.right,
-      height = 800 - margin.top - margin.bottom,
+  var width = 800,
+      height = 800,
       innerRadius = 80,
       outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
 
       // append the svg object to the body of the page
   var svg = d3.select("div#vis")
     .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
+    .style("width", "100%")
+    .style("height", "auto")
     .append("g")
-      .attr("transform", "translate(" + width / 2 + "," + ( height/2+100 )+ ")"); // Add 100 on Y translation, cause upper bars are longer
 
   x = d3.scaleBand()
     .domain(data.map(d => d.title))
