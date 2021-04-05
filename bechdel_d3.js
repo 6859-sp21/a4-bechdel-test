@@ -76,13 +76,26 @@ function make_stats(data) {
 
 function make_plot(data) {
 
-  
-  const width = 500;
-  const height = 500;
-  const outerRadius = Math.min(width / height) / 2;
-  const innerRadius = 200;
+  // const width = 500;
+  // const height = 500;
+  // const outerRadius = Math.min(width / height) / 2;
+  // const innerRadius = 200;
+  //
+  // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
 
-  const margin = ({top: 10, right: 10, bottom: 20, left: 20});
+  // set the dimensions and margins of the graph
+  // var margin = {top: 10, right: 10, bottom: 10, left: 10},
+  //     width = 460 - margin.left - margin.right,
+  //     height = 460 - margin.top - margin.bottom,
+      innerRadius = 80,
+      outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
+
+      // append the svg object to the body of the page
+  var svg = d3.select("div#vis")
+    .append("svg")
+      .attr("width", "100%")
+      .attr("height", "100%")
+    .append("g")
 
   x = d3.scaleBand()
     .domain(data.map(d => d.title))
@@ -90,22 +103,22 @@ function make_plot(data) {
     .align(0)
 
   y = d3.scaleRadial()
-      .domain([0, d3.max(data, d => d.rating)])
+      .domain([0, 3])
       .range([innerRadius, outerRadius])
-  
-  arc = d3.arc()
-      .innerRadius(innerRadius)
-      .outerRadius(d => parseInt(d.rating))
-      .startAngle(d => x(d.title))
-      .endAngle(d => x(d.title) + x.bandwidth)
-      .padAngle(0.01)
-      .padRadius(innerRadius)
-  
-  const svg = d3.select("div#vis")
-      .attr("viewBox", `${width / 2} ${height / 2} ${width} ${height}`)
-      .style("width", "100%")
-      .style("height", "auto")
-      .style("font", "10px sans-serif");
+
+  // arc = d3.arc()
+  //     .innerRadius(innerRadius)
+  //     .outerRadius(d => parseInt(d.rating))
+  //     .startAngle(d => x(d.title))
+  //     .endAngle(d => x(d.title) + x.bandwidth)
+  //     .padAngle(0.01)
+  //     .padRadius(innerRadius)
+
+  // const svg = d3.select("div#vis")
+  //     .attr("viewBox", `${width / 2} ${height / 2} ${width} ${height}`)
+  //     .style("width", "100%")
+  //     .style("height", "auto")
+  //     .style("font", "10px sans-serif");
 
 
   svg.append("g")
@@ -116,13 +129,12 @@ function make_plot(data) {
       .attr("fill", "#69b3a2")
       .attr("d", d3.arc()     // imagine your doing a part of a donut plot
         .innerRadius(innerRadius)
-        .outerRadius(d => parseInt(d.rating))
+        .outerRadius(d => y(d.rating))
         .startAngle(d => x(d.title))
         .endAngle(d => x(d.title) + x.bandwidth())
         .padAngle(0.01)
         .padRadius(innerRadius))
 
   console.log(svg.node())
-  
+
 }
-  
