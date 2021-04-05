@@ -1,14 +1,10 @@
-// Load data from a URL. You can also have the json file downloaded.
-// See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
-// let url = "https://bechdeltest.com/api/v1/getAllMovies"
-d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData) => {
+d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
   all_data = bechdelData;
   activeData = [];
+
   // Make a list of Movie Names for Search
   movie_names = []
-  for (i=0; i<all_data.length; i++) {
-    movie_names.push(all_data[i].title);
-  };
+  movie_names = all_data.map(m => m.title);
 
   $( "#movie_search_box" ).autocomplete({
     source: movie_names
@@ -23,11 +19,8 @@ d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAll
   });
 
   make_stats(all_data);
+  make_plot(activeData)
 
-
-
-  // const avgRating = d3.create("div");
-  // const avgDecade = d3.create("div");
 });
 
 function find_movie(){
@@ -63,223 +56,66 @@ function make_stats(data) {
 }
 
 function make_plot(data) {
-  //code to make the d3 visualization Circular Bar Chart?
-  return
+  // NOT SUNBURST -> RADIAL STACKED BAR CHART
+  // need to restructure dataset to be hierarchical (if rating is 3, create all children up to rating?)
+    // need helper function 
+    // array of objects, mapping movie name to bechdel test score at the very least
+
+  // should only be passing in active data (for movies we're interested in querying)
+  // adapted from https://bl.ocks.org/denjn5/e1cdbbe586ac31747b4a304f8f86efa5
+  const width = 1000;
+  const height = 1000;
+  const outerRadius = Math.min(width / height) / 2;
+  const innerRadius = 200;
+
+  const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+  // let svg = d3.select("#vis")
+  //   .append("svg")
+  //   .attr("width", width)
+  //   .attr("height", height)
+  //   .append("g")
+  //   .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
+
+  // let barScale = d3.scale.linear()
+  //   .domain([0, data.length])
+  //   .range([0, 3]);
+  
+  y = d3.scaleRadial()
+    // .domain([0, 3])
+    .domain([0, d3.max(data, d => d.rating)])
+    .range([innerRadius, outerRadius])
+  
+  x = d3.scaleBand()
+    .domain(data.map(d => d.title))
+    .range([0, 2* Math.PI])
+    .align(0)
+  
+  arc = d3.arc()
+    .innerRadius(d => y(d[0]))
+    .outerRadius(d => y(d[1]))
+    .startAngle(d => x(d.data.title))
+    .endAngle(d => x(d.data.title) + x.bandwidth())
+    .padAngle(0.01)
+    .padRadius(innerRadius)
+  
+  const svg = d3.select("#vis")
+      .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
+      .style("width", "100%")
+      .style("height", "auto")
+      .style("font", "10px sans-serif");
+
+  svg.append("g")
+    .selectAll("g")
+    .data(data)
+    .join("g")
+      // .attr("fill", d => z(d.key))
+    .selectAll("path")
+    .data(d => d)
+    .join("path")
+      .attr("d", arc);
+  console.log(svg.node())
+  return svg.node();
+  
 }
-  // // 2. Setting up variables that describe our chart's space.
-  // const height = 400;
-  // const width = 500;;
-  // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
-
-  // // // 3. Create a SVG we will use to make our chart.
-  // // // See https://developer.mozilla.org/en-US/docs/Web/SVG for more on SVGs.
-  // const svg = d3.create('svg')
-  //   .attr('width', width)
-  //   .attr('height', height);
-
-
-  // // 5. Drawing our points
-  // const symbol = d3.symbol();
-  // const g = svg.append('g')
-  //   .classed('marks', true)
-
-  //   // helper that tackles selection and cluster color in the absence of a selection
-  //   function getClusterColor(datum) {
-  //     if (datum.hasOwnProperty("selected") && !datum.selected) {
-  //       return "lightgray";
-  //     }
-  //     return colorScale(datum.cluster);
-  //   };
-
-  // //*********************************************************************
-  // // Draw our histogram
-  // const width_histo = 500,
-  //       height_histo = 150,
-  //       margin_histo = {top: 10, right: 0, bottom: 20, left: 150};
-
-  // const svg_histo = d3.create('svg')
-  //   .attr('width', width_histo)
-  //   .attr('height', height_histo);
-
-  // // Helper function to nicely aggregate the data to plot on the histogram
-  // // output: [{key: 0, value: 495927174}, {key: 1, value: 355392405}, ...{key: 5, value: 854125031}]
-  // const aggregate_Histo = (data) => d3.rollups(
-  //   data.filter(d => (d.year === year && (!d.hasOwnProperty('selected') || d.selected == true))),
-  //   vals => d3.sum(vals, d => d.pop),
-  //   d => d.cluster
-  // ).map(d => ({key: d[0], value: d[1]}));
-
-  // const rawAggregate = aggregate_Histo(gapminder);
-
-  // const xScale_Histo = d3.scaleLinear()
-  //   .domain([0, d3.max(rawAggregate, d => d.value)])
-  //   .range([margin_histo.left, width_histo - margin_histo.right])
-  //   .nice();
-
-  // const yScale_Histo = d3.scaleBand()
-  //   .domain(rawAggregate.map(d => d.key))
-  //   .range([height_histo - margin_histo.bottom, margin_histo.top])
-  //   .padding(0.1);
-
-  // svg_histo.append('g')
-  //   .classed('x-axis', true)
-  //   .attr('transform', `translate(0, ${height_histo - margin_histo.bottom})`)
-  //   .call(d3.axisBottom(xScale_Histo).ticks(3));
-
-  // const continents = ['South Asia',
-  //   'Europe & Central Asia',
-  //   'Sub-Saharan Africa',
-  //   'America',
-  //   'East Asia & Pacific',
-  //   'Middle East & North Africa'];
-
-  // svg_histo.append('g')
-  //   .classed('y-axis', true)
-  //   .attr('transform', `translate(${margin_histo.left}, 0)`)
-  //   .call(d3.axisLeft(yScale_Histo).tickFormat((d,i) => continents[d]));
-
-  // const g_hist = svg_histo.append('g')
-  //   .classed('marks', true);
-
-  // //histogram datajoin
-  // function dataJoinHisto(rawData = gapminder) {
-  //   const data = aggregate_Histo(rawData);
-  //   // console.log(data);
-
-  //   g_hist.selectAll('rect')
-  //     .data(data)
-  //     // // join without animation:
-  //     // .join('rect')
-  //     //   .attr('x', margin_histo.left)
-  //     //   .attr('y', d => yScale_Histo(d.key))
-  //     //   .attr('width', d => xScale_Histo(d.value) - margin_histo.left)
-  //     //   .attr('height', yScale_Histo.bandwidth())
-  //     //   .style('fill', d => colorScale(d.key))
-  //     // // To animate the changes instead:
-  //     .join(
-  //       enter => enter.append("rect")
-  //           .attr("fill", d => colorScale(d.key))
-  //           .attr('x', margin_histo.left)
-  //           .attr('y', d => yScale_Histo(d.key))
-  //           .attr('height', yScale_Histo.bandwidth())
-  //         .call(enter => enter.transition().duration(1000)
-  //           .attr('width', d => xScale_Histo(d.value) - margin_histo.left)),
-  //       update => update
-  //           .attr("fill", d => colorScale(d.key))
-  //           .attr('y', d => yScale_Histo(d.key))
-  //           // .attr('width', d => xScale_Histo(d.value) - margin_histo.left),
-  //         .call(update => update.transition().duration(200)
-  //           .attr('width', d => xScale_Histo(d.value) - margin_histo.left)),
-  //       exit => exit
-  //         .call(exit => exit.transition().duration(1000)
-  //           .attr('width', d => xScale_Histo(0) - margin_histo.left)
-  //           .remove())
-  //     );
-
-  // }
-  // //*********************************************************************
-
-  // //scatter plot datajoin
-  // function dataJoin(rawData = gapminder) {
-  //     const data = rawData.filter(d => d.year === year);
-
-  //     g.selectAll('path')
-  //         .data(data)
-  //         .join('path')
-  //           .classed('country', true) // can reference these marks like css, i.e. 'path.country'
-  //           .attr('transform', d => `translate(${xScale(d.fertility)}, ${yScale(d.life_expect)})`)
-  //           .attr('fill', d => getClusterColor(d))
-  //           .attr('fill-opacity', 0.7)
-  //           .attr('d', d => symbol())
-  //   }
-
-
-  // // Helper to draw both the scatter plot and the histogram
-  // function chartsDataJoin(rawData = gapminder) {
-  //   dataJoin(rawData);
-
-  //   // this is for the histogram
-  //   dataJoinHisto(rawData);
-  // };
-
-  // chartsDataJoin();
-
-  // //6. Drawing our x-axis
-  // svg.append('g')
-  // .attr('transform', `translate(0, ${height - margin.bottom})`)
-  // .call(d3.axisBottom(xScale))
-  // // Add x-axis title 'text' element.
-  // .append('text')
-  //   .attr('text-anchor', 'end')
-  //   .attr('fill', 'black')
-  //   .attr('font-size', '12px')
-  //   .attr('font-weight', 'bold')
-  //   .attr('x', width - margin.right)
-  //   .attr('y', -10)
-  //   .text('Fertility');
-
-  // //7. Drawing our y-axis
-  // svg.append('g')
-  //   .attr('transform', `translate(${margin.left}, 0)`)
-  //   .call(d3.axisLeft(yScale))
-  //   // Add y-axis title 'text' element.
-  //   .append('text')
-  //     .attr('transform', `translate(20, ${margin.top}) rotate(-90)`)
-  //     .attr('text-anchor', 'end')
-  //     .attr('fill', 'black')
-  //     .attr('font-size', '12px')
-  //     .attr('font-weight', 'bold')
-  //     .text('Life Expectancy');
-
-  // //8.  Adding a background label for the year.
-  // const yearLabel = svg.append('text')
-  //   .attr('x', 40)
-  //   .attr('y', height - margin.bottom - 20)
-  //   .attr('fill', '#ccc')
-  //   .attr('font-family', 'Helvetica Neue, Arial')
-  //   .attr('font-weight', 500)
-  //   .attr('font-size', 80)
-  //   .text(year);
-
-  // // 9. Adding a brush to allow selecting a sub-region
-  // const brush = d3.brush()  // Add the brush feature using the d3.brush function
-  //   // initialise the brush area
-  //   .extent([[0, 0], [width, height]]) // wrong
-  //   .extent([[margin.left, 0], [width, height-margin.bottom]])
-  //   .on("start brush end", brushed)
-
-  // // 10. append element and call brush
-  // svg.select("g.marks")
-  //     .attr("class", "brush")
-  //     .call(brush)
-
-  // // 11. add brush callback to handle brush event
-  // function brushed(event) {
-  //   const coords = event.selection; // [[x0, y0], [x1, y1]] for 2D brushes; [x0, x1] or [y0, y1] for 1D brushes
-  //   if (coords) {
-  //     const [[x0, y0], [x1, y1]] = coords;
-
-  //     // augment the data with a field "selected" which is set to true only
-  //     // for points within the brush selection
-  //     const brushedData = gapminder.map(d => {
-  //       return {
-  //         ...d,
-  //         selected: x0 <= xScale(d.fertility) && xScale(d.fertility) < x1 && y0 <= yScale(d.life_expect) && yScale(d.life_expect) < y1
-  //       };
-  //     });
-
-  //     chartsDataJoin(brushedData);
-  //   }
-  // };
-
-  // // 12. adding a clear on double click
-  // svg.on('dblclick', (event, d) => {
-  //   // gapminder data is not augmented with the "selected" field above,
-  //   // so getClusterColor knows to not grey things out
-  //   chartsDataJoin(gapminder);
-  // });
-
-  // document.getElementById("chart").appendChild(svg.node());
-
-  // //add the histogram below the graph
-  // document.getElementById("chart").appendChild(svg_histo.node());
+  

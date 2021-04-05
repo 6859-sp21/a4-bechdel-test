@@ -7,28 +7,20 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
   </head>
   <body>
-    <h1>Your Bechdel Score</h1>
+    <div style="margin: auto; width: 70%">
+      <h1>Your Bechdel Score</h1>
 
-    <!-- input box for gene search -->
-    <div id='movie_search_container'>
-        <input id='movie_search_box' type="text" placeholder="Search for a movie to add">
-        <button id='movie_search_button' type="button">Search</button>
+      <!-- input box for search -->
+      <div id='movie_search_container'>
+          <input id='movie_search_box' type="text" placeholder="Search for a movie to add">
+          <button id='movie_search_button' type="button">Search</button>
+      </div>
 
+      <div id="stats"></div>
+
+      <div id="vis"></div>
     </div>
-
-    <!-- <div id="chart" style="width:520px;height:420px;">
-    </div> -->
-    <div id="stats"></div>
-
-
-
-    <style>
-      .selected {
-        opacity: 1 !important;
-        stroke: black;
-        stroke-width: 1px;
-      }
-    </style>
+    
 
     <script src='bechdel_d3.js'></script>
   </body>
