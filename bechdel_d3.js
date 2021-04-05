@@ -82,7 +82,10 @@ function make_plot(data) {
   // const innerRadius = 200;
   //
   // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
-
+  const colorScale = d3.scaleOrdinal()
+    .domain([0, 1, 2, 3])
+    .range(d3.schemeTableau10)
+    
   // set the dimensions and margins of the graph
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = 800 - margin.left - margin.right,
@@ -107,19 +110,29 @@ function make_plot(data) {
       .domain([0, 3])
       .range([innerRadius, outerRadius])
 
-  // arc = d3.arc()
-  //     .innerRadius(innerRadius)
-  //     .outerRadius(d => parseInt(d.rating))
-  //     .startAngle(d => x(d.title))
-  //     .endAngle(d => x(d.title) + x.bandwidth)
-  //     .padAngle(0.01)
-  //     .padRadius(innerRadius)
-
-  // const svg = d3.select("div#vis")
-  //     .attr("viewBox", `${width / 2} ${height / 2} ${width} ${height}`)
-  //     .style("width", "100%")
-  //     .style("height", "auto")
-  //     .style("font", "10px sans-serif");
+  yAxis = g => g
+      .attr("text-anchor", "middle")
+      // .call(g => g.append("text")
+      //     .attr("y", d => -y(y.ticks(5).pop()))
+      //     .attr("dy", "-1em"))
+          // .text("Bechdel Test Score"))
+      .call(g => g.selectAll("g")
+        .data(y.ticks(4))
+        .join("g")
+          .attr("fill", "none")
+          .call(g => g.append("circle")
+              .attr("stroke", "#000")
+              .attr("stroke-opacity", 0.5)
+              .attr("r", y))
+          .call(g => g.append("text")
+              .attr("y", d => -y(d))
+              .attr("dy", "0.35em")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 5)
+              .text(y.tickFormat(4, "s"))
+           .clone(true)
+              .attr("fill", "#000")
+              .attr("stroke", "none")))
 
 
   svg.append("g")
@@ -127,7 +140,7 @@ function make_plot(data) {
     .data(data)
     .enter()
     .append("path")
-      .attr("fill", "#69b3a2")
+      .attr("fill", d => colorScale(d.rating))
       .attr("d", d3.arc()     // imagine your doing a part of a donut plot
         .innerRadius(innerRadius)
         .outerRadius(d => y(d.rating))
@@ -135,6 +148,7 @@ function make_plot(data) {
         .endAngle(d => x(d.title) + x.bandwidth())
         .padAngle(0.01)
         .padRadius(innerRadius))
+        
 
     // Add the labels
     svg.append("g")
@@ -150,6 +164,9 @@ function make_plot(data) {
           .style("font-size", "11px")
           .attr("alignment-baseline", "middle")
 
+    // add y axis labels
+    svg.append("g")
+      .call(yAxis)
   console.log(svg.node())
 
 }
