@@ -1,8 +1,8 @@
 // Load data from a URL. You can also have the json file downloaded.
 // See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
-// let url = "https://bechdeltest.com/api/v1/getAllMovies"
-d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData) => {
-  all_data = bechdelData;
+// let url = "https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv"
+d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
+  all_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
   // Make a list of Movie Names for Search
   movie_names = []
@@ -43,23 +43,35 @@ function find_movie(){
 };
 
 function make_stats(data) {
-  const passingData = data.filter(d => d.rating === 3);
-  const passCount = d3.count(passingData, d => d.rating);
-  const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 1000 ) / 10; //round to one decimal point
+  const passData = data.filter(d => parseInt(d.rating) === 3);
+  const passCount = d3.count(passData, d => d.rating);
+  const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
 
-  const avgRating = d3.mean(data, d => d);
-  const totalGross = 2000000; //code this as a query
+  const avgIMDbRating = Math.round(d3.mean(data, d => d.imdb_rating) * 10) / 10; // round to one decimal point
 
-  const abc = [{name: "Pass Rate", value: passRate}, {name: "Average Rating", value: avgRating},
-   {name: "Total Domestic Box Office Earnings ($)", value: totalGross}, {name: "Number of Movies", value:activeData.length}];
-  // make a list for all three stats
-  let container = d3.create('div');
-  container.selectAll('div')
-    .data(abc)
+  const avgDomGross = Math.round(d3.mean(data, d => d.domgross) / 10**5) / 10; // in millions, round to one decimal point
+
+  const stats = [{name: "Bechdel Test Pass Rate", value: passRate},
+                 {name: "Average IMDb Rating", value: avgIMDbRating},
+                 {name: "Average Domestic Box Office Gross", value: `$${avgDomGross}M`}];
+                //  {name: "Number of Movies", value:activeData.length}];
+
+  const container = d3.select('div#stats');
+  container.selectAll('div#statvalues')
+    .data(stats)
     .join('div')
-    .text(d => `${d.name}: ${d.value}`);
-
-  document.getElementById("stats").appendChild(container.node())
+    .style('width', 100 / 3 + '%')
+    .style('display', 'flex')
+    .style('justify-content', 'center')
+    .style('font-size', '3em')
+    .text(d => d.value);
+  container.selectAll('div#statnames')
+    .data(stats)
+    .join('div')
+    .style('width', 100 / 3 + '%')
+    .style('display', 'flex')
+    .style('justify-content', 'center')
+    .text(d => d.name);
 }
 
 function make_plot(data) {
