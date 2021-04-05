@@ -43,6 +43,8 @@ function find_movie(){
 };
 
 function make_stats(data) {
+  $("div#stats").empty(); // prevent accumulation of stats
+
   const passData = data.filter(d => parseInt(d.rating) === 3);
   const passCount = d3.count(passData, d => d.rating);
   const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
@@ -51,23 +53,25 @@ function make_stats(data) {
 
   const avgDomGross = Math.round(d3.mean(data, d => d.domgross) / 10**5) / 10; // in millions, round to one decimal point
 
-  const stats = [{name: "Bechdel Test Pass Rate", value: passRate},
+  const stats = [{name: "Bechdel Test Pass Rate", value: `${passRate}%`},
                  {name: "Average IMDb Rating", value: avgIMDbRating},
                  {name: "Average Domestic Box Office Gross", value: `$${avgDomGross}M`}];
                 //  {name: "Number of Movies", value:activeData.length}];
 
   const container = d3.select('div#stats');
-  container.selectAll('div#statvalues')
+  container.selectAll('div#statvalue')
     .data(stats)
     .join('div')
+    .attr('class', 'statvalue')
     .style('width', 100 / 3 + '%')
     .style('display', 'flex')
     .style('justify-content', 'center')
     .style('font-size', '3em')
     .text(d => d.value);
-  container.selectAll('div#statnames')
+  container.selectAll('div#statname')
     .data(stats)
     .join('div')
+    .attr('class', 'statname')
     .style('width', 100 / 3 + '%')
     .style('display', 'flex')
     .style('justify-content', 'center')
