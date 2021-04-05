@@ -75,7 +75,7 @@ function make_stats(data) {
 }
 
 function make_plot(data) {
-
+  $("div#vis").empty(); // prevent accumulation of stats
   // const width = 500;
   // const height = 500;
   // const outerRadius = Math.min(width / height) / 2;
@@ -84,18 +84,19 @@ function make_plot(data) {
   // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
 
   // set the dimensions and margins of the graph
-  // var margin = {top: 10, right: 10, bottom: 10, left: 10},
-  //     width = 460 - margin.left - margin.right,
-  //     height = 460 - margin.top - margin.bottom,
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = 800 - margin.left - margin.right,
+      height = 800 - margin.top - margin.bottom,
       innerRadius = 80,
       outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
 
       // append the svg object to the body of the page
   var svg = d3.select("div#vis")
     .append("svg")
-      .attr("width", "100%")
-      .attr("height", "100%")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
     .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + ( height/2+100 )+ ")"); // Add 100 on Y translation, cause upper bars are longer
 
   x = d3.scaleBand()
     .domain(data.map(d => d.title))
@@ -134,6 +135,20 @@ function make_plot(data) {
         .endAngle(d => x(d.title) + x.bandwidth())
         .padAngle(0.01)
         .padRadius(innerRadius))
+
+    // Add the labels
+    svg.append("g")
+        .selectAll("g")
+        .data(data)
+        .enter()
+        .append("g")
+          .attr("text-anchor", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+          .attr("transform", function(d) { return "rotate(" + ((x(d.title) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")"+"translate(" + (y(d.rating)+10) + ",0)"; })
+        .append("text")
+          .text(function(d){return(d.title)})
+          .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+          .style("font-size", "11px")
+          .attr("alignment-baseline", "middle")
 
   console.log(svg.node())
 
