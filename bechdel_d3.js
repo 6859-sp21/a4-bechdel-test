@@ -76,23 +76,19 @@ function make_stats(data) {
 
 function make_plot(data) {
   $("div#vis").empty(); // prevent accumulation of stats
-  // const width = 500;
-  // const height = 500;
-  // const outerRadius = Math.min(width / height) / 2;
-  // const innerRadius = 200;
-  //
-  // const margin = ({top: 10, right: 10, bottom: 20, left: 20});
+  const margin = ({top: 50, right: 50, bottom: 50, left: 50});
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
     .range(d3.schemeTableau10)
-    
-  // set the dimensions and margins of the graph
-  var width = 800,
-      height = 800,
-      innerRadius = 80,
-      outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
 
-      // append the svg object to the body of the page
+  // set the dimensions and margins of the graph
+   
+  var width = 1500,
+      height = 1500,
+      innerRadius = 80,
+      outerRadius = Math.min(width, height) / 2 - 200;   // the outerRadius goes from the middle of the SVG area to the border
+
+  // append the svg object to the body of the page
   var svg = d3.select("div#vis")
     .append("svg")
     .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
@@ -149,23 +145,21 @@ function make_plot(data) {
         .padRadius(innerRadius))
         
 
-    // Add the labels
-    svg.append("g")
-        .selectAll("g")
-        .data(data)
-        .enter()
-        .append("g")
-          .attr("text-anchor", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
-          .attr("transform", function(d) { return "rotate(" + ((x(d.title) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")"+"translate(" + (y(d.rating)+10) + ",0)"; })
-        .append("text")
-          .text(function(d){return(d.title)})
-          .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-          .style("font-size", "11px")
-          .attr("alignment-baseline", "middle")
+    // add movie titles
+  svg.append("g")
+      .selectAll("g")
+      .data(data)
+      .enter()
+      .append("g")
+        .attr("text-anchor", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+        .attr("transform", function(d) { return "rotate(" + ((x(d.title) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")"+"translate(" + (y(d.rating)+10) + ",0)"; })
+      .append("text")
+        .text(function(d){return(d.title)})
+        .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+        .style("font-size", "11px")
+        .attr("alignment-baseline", "middle")
 
     // add y axis labels
     svg.append("g")
       .call(yAxis)
-  console.log(svg.node())
-
 }
