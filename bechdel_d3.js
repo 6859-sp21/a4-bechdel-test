@@ -7,17 +7,25 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
 
   // Make a list of Movie Names for Search
   movie_names = []
-  movie_names = all_data.map(m => m.title);
+  movie_names = all_data.map(m => m.title+', '+m.year);
 
   $( "#movie_search_box" ).autocomplete({
-    source: movie_names
+    source: movie_names,
+    select: function(event, ui) {
+        if(ui.item){
+            // $('#movie_search_box').val(ui.item.value); //default functionality.
+            find_movie(ui.item.value);
+            $('#movie_search_box').val('');
+            return false;
+        }
+    }
   });
   // submit movie button
   $("#movie_search_box").keyup(function (e) {
       if (e.keyCode == 13) {
           // Do something
           // console.log('pressed enter');
-          find_movie();
+          find_movie($('#movie_search_box').val());
       }
   });
 
@@ -26,15 +34,16 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
 
 });
 
-function find_movie(){
+function find_movie(search_title){
   // get the searched movie name
-  const search_title = $('#movie_search_box').val();
+  // const search_title = $('#movie_search_box').val();
   index = movie_names.indexOf(search_title)
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
     activeData.push(all_data[index]);
     make_stats(activeData);
     make_plot(activeData);
+    $('#movie_search_box').val('');
   }
 };
 
@@ -194,7 +203,7 @@ function make_plot(data) {
       .append("text")
         .text(function(d){return(d.title)})
         .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "11px")
+        .style("font-size", "14px")
         .attr("alignment-baseline", "middle")
 
     // add y axis labels
