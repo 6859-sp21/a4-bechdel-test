@@ -72,7 +72,7 @@ function make_stats(data) {
     .style('width', 100 / 3 + '%')
     .style('display', 'flex')
     .style('justify-content', 'center')
-    .style('font-size', '3em')
+    .style('font-size', '48px')
     .text(d => d.value);
   container.selectAll('div#statname')
     .data(stats)
