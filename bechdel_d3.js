@@ -30,7 +30,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   });
 
   make_stats(all_data);
-  make_plot(all_data.slice(1000))
+  make_plot(all_data.slice(1600))
 
 });
 
@@ -94,7 +94,7 @@ function make_plot(data) {
 
   // set the dimensions and margins of the graph
   var width = 1500,
-      height = 1500,
+      height = 1000,
       innerRadius = 80,
       outerRadius = Math.min(width, height) / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
 
@@ -156,7 +156,7 @@ function make_plot(data) {
   //   .delay((d, i) => i * 200)
   //   .duration(1000)
   //   .attrTween('d', arcTween)
-  var tooltip = d3.select("body").append("div")
+  var tooltip = d3.select("div#stats").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -177,7 +177,9 @@ function make_plot(data) {
           .style("top", (event.pageY - 28) + "px");
 
          d3.select(this)
-           .attr("fill", "black")
+          // style("border", "50px solid")
+           .style("border", "50px solid black")
+           .style("opacity", 0.5)
            .attr("d", symbol.size(64 * 4));
         })
       .on("mouseout", function(event, d) {
@@ -186,8 +188,9 @@ function make_plot(data) {
           .style("opacity", 0);
 
         d3.select(this)
-           .attr("fill", colorScale(d.rating))
-           .attr("d", symbol.size(64));
+          .style("opacity", 1)
+           .attr("fill", colorScale(d.rating));
+           
 
        });
 
