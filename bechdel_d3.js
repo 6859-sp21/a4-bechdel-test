@@ -93,7 +93,7 @@ function make_plot(data) {
     .range(d3.schemeTableau10)
 
   // set the dimensions and margins of the graph
-  var width = 1500,
+  var width = 1200,
       height = 1000,
       innerRadius = 80,
       outerRadius = Math.min(width, height) / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border

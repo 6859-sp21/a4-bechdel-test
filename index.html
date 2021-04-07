@@ -2,10 +2,18 @@
 <html>
   <head>
     <!-- Load d3.js -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Work+Sans&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v6.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <style>
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+    }
+    p, li, div {
+      font-family: 'Work Sans', sans-serif;
+    }
     .ui-autocomplete {
       position: absolute;
       top: 100%;
@@ -26,6 +34,11 @@
       -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
       background-clip: padding-box;
+      font-family: 'Work Sans', sans-serif;
+      max-height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index:1000 !important;
     }
 
     .ui-autocomplete > li > div {
@@ -36,6 +49,7 @@
       line-height: 1.42857143;
       color: #333333;
       white-space: nowrap;
+      font-family: 'Work Sans', sans-serif;
     }
 
 .ui-state-hover,
@@ -66,13 +80,11 @@
   </style>
   </head>
   <body>
-
-    <h1 style="display:flex;justify-content:center">Your Bechdel Score</h1>
+    <h1 style="display:flex;justify-content:center;font-size:64px;">Your Bechdel Score</h1>
 
     <!-- input box for gene search -->
-    <div id='movie_search_container' style="display:flex;justify-content:center">
-        <input id='movie_search_box' style="width:20%;" type="text" placeholder="Search for a movie to add">
-        <!-- <button id='movie_search_button' type="button">Search</button> -->
+    <div id='movie_search_container' style="display:flex;justify-content:center;margin-bottom:10px">
+        <input id='movie_search_box' style="width:20%;font-family:'Work Sans',sans-serif;" type="text" placeholder="Search for a movie to add">
 
     </div>
 
@@ -82,23 +94,27 @@
 
       <div id="stats"></div>
 
+      <div style="display:flex;flex-direction:row;">
       <div id="vis" style="display:flex;justify-content:center; margin: auto; width: 80%"></div>
+
+      <div style="width:40%;display:flex;flex-direction:column;justify-content:center;">
+        <h1>The Bechdel Test</h1>
+        <p>The Bechdel test originated in this comic, created by the cartoonist Alison Bechdel, encapsulating ideas she
+        credits to her friend Liz Wallace. It has three components.</p>
+        <ol>
+          <li>The film contains at least two named women.</li>
+          <li>These women have a conversation on screen.</li>
+          <li>The conversation is about something other than a man.</li>
+        </ol>
+        <p>Although these requirements seem simple, many movies fail the Bechdel Test. Some don't even meet the first condition.</p>
+        <p>Try adding your favorite movies to the visualization - how well are women represented in the movies you like to watch?</p>
+      </div>
+      </div>
     </div>
 
     <div id="Explanation" style="display:flex;justify-content:center">
       <img src="https://cdn.vox-cdn.com/thumbor/D4Tr1mvjnxj0mLUrkmaIjLWf1GA=/1400x0/filters:no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/6229349/The-Rule-cleaned-up.jpg"
-           width="600"/>
-     <div>
-       <h1>The Bechdel Test</h1>
-       <p>The Bechdel test originated in this comic, created by the cartoonist Alison Bechdel, encapsulating ideas she
-       credits to her friend Liz Wallace. It has three components:</p>
-       <ol>
-         <li>The film contains at least two named women.</li>
-         <li>These women have a conversation on screen.</li>
-         <li>The conversation is about something other than a man.</li>
-       </ol>
-       <p>Although these requirements seem simple, many movies fail the Bechdel Test. Some don't even meet the first condition.</p>
-     </div>
+           width="800"/>
 
     </div>
 
