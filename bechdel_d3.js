@@ -38,6 +38,7 @@ function find_movie(){
   }
 };
 
+
 function make_stats(data) {
   $("div#stats").empty(); // prevent accumulation of stats
 
@@ -76,17 +77,17 @@ function make_stats(data) {
 
 function make_plot(data) {
   $("div#vis").empty(); // prevent accumulation of stats
-  const margin = ({top: 50, right: 50, bottom: 50, left: 50});
+
+  const margin = 200;
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
     .range(d3.schemeTableau10)
 
   // set the dimensions and margins of the graph
-   
   var width = 1500,
       height = 1500,
       innerRadius = 80,
-      outerRadius = Math.min(width, height) / 2 - 200;   // the outerRadius goes from the middle of the SVG area to the border
+      outerRadius = Math.min(width, height) / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
 
   // append the svg object to the body of the page
   var svg = d3.select("div#vis")
@@ -129,6 +130,26 @@ function make_plot(data) {
               .attr("fill", "#000")
               .attr("stroke", "none")))
 
+  arc = d3.arc()
+    .innerRadius(innerRadius)
+    .outerRadius(d => y(parseInt(d.rating)))
+    .startAngle(d => x(d.title))
+    .endAngle(d => x(d.title) + x.bandwidth())
+    .padAngle(0.01)
+    .padRadius(innerRadius)
+  
+  // arcTween = (d, i) => {
+  //   let interpolate = d3.interpolate(0, d.rating);
+  //   return t => arc(interpolate(t), i)
+  // }
+  
+  // arc.transition()
+  //   .delay((d, i) => i * 200)
+  //   .duration(1000)
+  //   .attrTween('d', arcTween)
+  var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
   svg.append("g")
     .selectAll("path")
@@ -136,16 +157,33 @@ function make_plot(data) {
     .enter()
     .append("path")
       .attr("fill", d => colorScale(d.rating))
-      .attr("d", d3.arc()     // imagine your doing a part of a donut plot
-        .innerRadius(innerRadius)
-        .outerRadius(d => y(d.rating))
-        .startAngle(d => x(d.title))
-        .endAngle(d => x(d.title) + x.bandwidth())
-        .padAngle(0.01)
-        .padRadius(innerRadius))
-        
+      .attr("d", arc)
+      .on("mouseover", function(event, d) {
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        tooltip.html("Title: " + d.title)
+          .style("left", (event.pageX) + "px")
+          .style("background", colorScale(d.rating))
+          .style("top", (event.pageY - 28) + "px");
 
-    // add movie titles
+         d3.select(this)
+           .attr("fill", "black")
+           .attr("d", symbol.size(64 * 4));
+        })
+      .on("mouseout", function(event, d) {
+        tooltip.transition()
+          .duration(500)
+          .style("opacity", 0);
+
+        d3.select(this)
+           .attr("fill", colorScale(d.rating))
+           .attr("d", symbol.size(64));
+
+       });
+
+
+  // add movie titles
   svg.append("g")
       .selectAll("g")
       .data(data)
