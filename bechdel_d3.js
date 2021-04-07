@@ -165,7 +165,7 @@ function make_plot(data) {
       .append("text")
         .text(function(d){return(d.title)})
         .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "11px")
+        .style("font-size", "14px")
         .attr("alignment-baseline", "middle")
 
     // add y axis labels
