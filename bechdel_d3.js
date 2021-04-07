@@ -105,6 +105,8 @@ function make_plot(data) {
     .style("width", "100%")
     .style("height", "auto")
     .append("g")
+  
+
 
   x = d3.scaleBand()
     .domain(data.map(d => d.title))
@@ -147,18 +149,11 @@ function make_plot(data) {
     .padAngle(0.01)
     .padRadius(innerRadius)
   
-  // arcTween = (d, i) => {
-  //   let interpolate = d3.interpolate(0, d.rating);
-  //   return t => arc(interpolate(t), i)
-  // }
-  
-  // arc.transition()
-  //   .delay((d, i) => i * 200)
-  //   .duration(1000)
-  //   .attrTween('d', arcTween)
   var tooltip = d3.select("div#stats").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
 
   svg.append("g")
     .selectAll("path")
@@ -167,47 +162,39 @@ function make_plot(data) {
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
-      .on("mouseover", function(event, d) {
-        tooltip.transition()
-          .duration(200)
-          .style("opacity", .9);
-        tooltip.html("Title: " + d.title)
-          .style("left", (event.pageX) + "px")
-          .style("background", colorScale(d.rating))
-          .style("top", (event.pageY - 28) + "px");
-
-         d3.select(this)
-          // style("border", "50px solid")
-           .style("border", "50px solid black")
-           .style("opacity", 0.5)
-           .attr("d", symbol.size(64 * 4));
-        })
-      .on("mouseout", function(event, d) {
-        tooltip.transition()
-          .duration(500)
-          .style("opacity", 0);
-
-        d3.select(this)
-          .style("opacity", 1)
-           .attr("fill", colorScale(d.rating));
-           
-
-       });
-
+        .on("mouseover", function(event, d) {
+          tooltip.transition()
+            .duration(200)
+            .style("opacity", 0.9)
+            .style("visibility", "visible")})
+        .on("mousemove", function(event, d) {
+          d3.select(this)
+            .style("opacity", 0.5)
+          tooltip.html("Movie Title: " + d.title)
+            .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
+            .style("background", colorScale(d.rating))
+            .style("padding", "10px")})
+        .on("mouseout", function(){
+          tooltip.transition()
+            .duration(300)
+            .style("opacity", 0)
+          d3.select(this)
+            .style("opacity", 1.0)
+          return tooltip.style("visibility", "hidden");});
 
   // add movie titles
-  svg.append("g")
-      .selectAll("g")
-      .data(data)
-      .enter()
-      .append("g")
-        .attr("text-anchor", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
-        .attr("transform", function(d) { return "rotate(" + ((x(d.title) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")"+"translate(" + (y(d.rating)+10) + ",0)"; })
-      .append("text")
-        .text(function(d){return(d.title)})
-        .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
-        .style("font-size", "14px")
-        .attr("alignment-baseline", "middle")
+  // svg.append("g")
+  //     .selectAll("g")
+  //     .data(data)
+  //     .enter()
+  //     .append("g")
+  //       .attr("text-anchor", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start"; })
+  //       .attr("transform", function(d) { return "rotate(" + ((x(d.title) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")"+"translate(" + (y(d.rating)+10) + ",0)"; })
+  //     .append("text")
+  //       .text(function(d){return(d.title)})
+  //       .attr("transform", function(d) { return (x(d.title) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
+  //       .style("font-size", "14px")
+  //       .attr("alignment-baseline", "middle")
 
     // add y axis labels
     svg.append("g")
