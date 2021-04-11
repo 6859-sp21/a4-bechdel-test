@@ -200,3 +200,11 @@ function make_plot(data) {
     svg.append("g")
       .call(yAxis)
 }
+
+function change_genre() {
+  var e = document.getElementById("select_genre");
+  var genre = e.options[e.selectedIndex].text;
+  genre_data = all_data.filter(d => d.genre.match(genre));
+  make_stats(genre_data);
+  make_plot(genre_data);
+}
