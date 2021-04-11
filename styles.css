@@ -5,7 +5,7 @@ h1 {
 #title {
     display: flex;
     justify-content: center;
-    font-size: 64px;
+    font-size: 60px;
 }
 
 p, li, div {
@@ -110,7 +110,7 @@ p, li, div {
 
 #movie_search_box {
     width: 40%;
-    font-size: 30px;
+    font-size: 24px;
     font-family: 'Work Sans', sans-serif;
     padding: 3px;
     padding-left: 10px;

@@ -72,7 +72,7 @@ function make_stats(data) {
     .style('width', 100 / 3 + '%')
     .style('display', 'flex')
     .style('justify-content', 'center')
-    .style('font-size', '48px')
+    .style('font-size', '36px')
     .text(d => d.value);
   container.selectAll('div#statname')
     .data(stats)
@@ -93,17 +93,17 @@ function make_plot(data) {
     .range(d3.schemeTableau10)
 
   // set the dimensions and margins of the graph
-  var width = 1200,
-      height = 1000,
+  var width = 1000,
+      height = 700,
       innerRadius = 80,
-      outerRadius = Math.min(width, height) / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
+      outerRadius = width / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
 
   // append the svg object to the body of the page
   var svg = d3.select("div#vis")
     .append("svg")
     .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
     .style("width", "100%")
-    .style("height", "auto")
+    .style("height", "100%")
     .append("g")
   
 
@@ -115,7 +115,7 @@ function make_plot(data) {
 
   y = d3.scaleRadial()
       .domain([0, 3])
-      .range([innerRadius, outerRadius])
+      .range([innerRadius+50, outerRadius])
 
   yAxis = g => g
       .attr("text-anchor", "middle")
