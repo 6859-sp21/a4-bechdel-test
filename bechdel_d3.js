@@ -4,7 +4,7 @@
 d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
   all_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
-
+  currentData = all_data.slice(1600)
   // Make a list of Movie Names for Search
   movie_names = []
   movie_names = all_data.map(m => m.title+', '+m.year);
@@ -29,6 +29,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
       }
   });
 
+  // generic loading in
   make_stats(all_data);
   make_plot(all_data.slice(1600))
 
@@ -41,26 +42,12 @@ function find_movie(search_title){
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
     activeData.push(all_data[index]);
+    currentData = activeData;
     make_stats(activeData);
     make_plot(activeData);
     $('#movie_search_box').val('');
   }
 };
-
-function sortDataByRatings(data) {
-  function compareRating(a,b) {
-    let comparison = 0;
-    if (a.rating > b.rating) {
-      comparison = 1
-    } else if (a.rating < b.rating) {
-      comparison = 01
-    } return comparison;
-  }
-  sortedData = [...data]
-  sortedData.sort(compareRating)
-  return sortedData
-}
-
 
 function make_stats(data) {
   $("div#stats").empty(); // prevent accumulation of stats
@@ -121,7 +108,7 @@ function make_plot(data) {
     .append("g")
   
   x = d3.scaleBand()
-    .domain(data.map(d => d.title))
+    .domain(data.map(d => `${d.title} (${d.year}`))
     .range([0, 2 * Math.PI])
     .align(0)
 
@@ -157,14 +144,14 @@ function make_plot(data) {
   arc = d3.arc()
     .innerRadius(innerRadius)
     .outerRadius(d => y(parseInt(d.rating)))
-    .startAngle(d => x(d.title))
-    .endAngle(d => x(d.title) + x.bandwidth())
+    .startAngle(d => x(`${d.title} (${d.year}`))
+    .endAngle(d => x(`${d.title} (${d.year}`) + x.bandwidth())
     .padAngle(0.03)
     .padRadius(innerRadius)
 
   function arcTween(a) {
-      console.log(a)
-      console.log(this._current)
+      // console.log(a)
+      // console.log(this._current)
       var i = d3.interpolate(this._current, a);
       this._current = i(0);
       return function(t) {
@@ -213,20 +200,6 @@ function make_plot(data) {
       d3.select(this)
         .style("opacity", 1.0)})
 
-  //  sorting
-  function change() {
-    if (checked) {
-      svg.selectAll("path")
-      .sort(function(a, b) {return b.rating - a.rating})
-
-    } else{
-      arc.sort(function(a, b){return a.rating - b.rating})
-    }
-  }
-
-  d3.select("input").on("change", change);
-
- 
   // add movie titles
   // svg.append("g")
   //     .selectAll("g")
@@ -244,14 +217,21 @@ function make_plot(data) {
     // add y axis labels
     svg.append("g")
       .call(yAxis)
-    
-
 }
 
 function change_genre() {
   var e = document.getElementById("select_genre");
   var genre = e.options[e.selectedIndex].text;
   genre_data = all_data.filter(d => d.genre.match(genre));
+  currentData = genre_data
   make_stats(genre_data);
   make_plot(genre_data);
+}
+
+function sortData() {
+  
+  currentData.sort(function(x, y){
+    return d3.ascending(x.rating, y.rating);
+  })
+  make_plot(currentData);
 }
