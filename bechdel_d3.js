@@ -85,7 +85,6 @@ function make_stats(data) {
 }
 
 function make_plot(data) {
-  let checked = false;
   $("div#vis").empty(); // prevent accumulation of stats
   const margin = 200;
   const colorScale = d3.scaleOrdinal()
@@ -164,6 +163,7 @@ function make_plot(data) {
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
+
       // .transition().duration(750).attrTween("d", arcTween)
   
   svg.selectAll("path")
@@ -229,12 +229,18 @@ function make_plot(data) {
 function change_genre() {
   var e = document.getElementById("select_genre");
   var genre = e.options[e.selectedIndex].text;
-  genre_data = all_data.filter(d => d.genre.match(genre));
-  // bug where no selected genre needs to go back to
+  if (genre === "Select Genre") {
+    if (activeData.length > 0){ // if we've used activeData in searches
+      genre_data = activeData
+    } else {
+      genre_data = all_data.slice(1600) // TODO decide on default 
+    }
+  } else {
+    genre_data = all_data.filter(d => d.genre.match(genre));
+  }
   currentData = genre_data;
   unsortedData = genre_data;
   sortData();
-  // make_plot(genre_data);
 }
 
 function sortData() {
