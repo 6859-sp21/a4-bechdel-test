@@ -9,7 +9,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   sorted = false;
 
   // generic loading in
-  make_plot(all_genre_data.slice(1600))
+  make_plot(currentData)
 });
 
 d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData1) => {
@@ -173,6 +173,7 @@ function make_plot(data) {
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
+      .on("contextmenu", openContextMenu1)
       .each(function(d) {this._current = d})
 
       // .transition().duration(750).attrTween("d", arcTween)
@@ -287,18 +288,60 @@ function clearData() {
   make_plot(activeData);
 
 }
+function removeElement() {
+  currentData.splice(menu1.selected, 1);
+  make_plot(currentData)
+}
 
 // Context Menu Stuff
 
 const menu = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
-        {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
         {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]
 });
 
+const menu1 = new ContextMenu({
+      'theme': 'default', // or 'blue'
+      'items': [
+        {'icon': 'minus-square', 'name': 'delete',  action: () => removeElement()  },
+        {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
+        {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
+      ]
+});
+
+function openContextMenu1(evt){
+
+  // prevent default event
+  evt.preventDefault();
+  //pre-remove the
+  menu1.selected = (currentData.indexOf(evt.toElement.__data__));
+  // open the menu with a delay
+  const time = menu1.isOpen() ? 100 : 0;
+
+  // hide the current menu (if any)
+  menu1.hide();
+  menu.hide()
+
+  // display menu at mouse click position
+  setTimeout(() => { menu1.show(evt.pageX, evt.pageY) }, time);
+
+  // close the menu if the user clicks anywhere on the screen
+  document.addEventListener('click', hideContextMenu1, false);
+
+}
+
+function hideContextMenu1(evt){
+
+  // hide the menu
+  menu1.hide();
+
+  // remove the listener from the document
+  document.removeEventListener('click', hideContextMenu1);
+
+}
 
 function openContextMenu(evt){
 
@@ -306,10 +349,11 @@ function openContextMenu(evt){
   evt.preventDefault();
 
   // open the menu with a delay
-  const time = menu.isOpen() ? 100 : 0;
+  const time = menu.isOpen() ? 100 : 100;
 
   // hide the current menu (if any)
   menu.hide();
+  menu1.hide()
 
   // display menu at mouse click position
   setTimeout(() => { menu.show(evt.pageX, evt.pageY) }, time);
