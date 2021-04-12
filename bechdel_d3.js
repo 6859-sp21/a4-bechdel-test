@@ -55,6 +55,7 @@ function find_movie(search_title){
     activeData.push(all_search_data[index]);
     currentData = activeData;
     make_plot(activeData);
+    get_user_movies()
     $('#movie_search_box').val('');
   }
 };
@@ -149,6 +150,7 @@ function make_plot(data) {
               .attr("fill", "#000")
               .attr("stroke", "none")))
 
+// d3 is not sure what is being entered + being updated perhaps
 
   arc = d3.arc()
     .innerRadius(innerRadius)
@@ -159,14 +161,13 @@ function make_plot(data) {
     .padRadius(innerRadius)
 
   function arcTween(a) {
-      // console.log(a)
-      // console.log(this._current)
       var i = d3.interpolate(this._current, a);
       this._current = i(0);
       return function(t) {
         return arc(i(t));
       };
     }
+
   svg.selectAll("path")
     .data(data)
     .enter()
@@ -184,9 +185,9 @@ function make_plot(data) {
       .duration(750)
       // .attrTween("d", arcTween);
 
-  svg.selectAll("path")
-    .data(data)
-    .exit().remove()
+  // svg.selectAll("path")
+  //   .data(data)
+  //   .exit().remove()
 
   // tooltips
   var tooltip = d3.select("div#vis").append("div")
@@ -276,17 +277,31 @@ function sortData() {
 
 function toggle_explanation() {
   var x = document.getElementById("explanation");
+  var y = document.getElementById("user_list");
   if (x.style.display === "none") {
     x.style.display = "block";
+    y.style.display = "none";
   } else {
     x.style.display = "none";
+    y.style.display = "block";
+    get_user_movies();
   }
-
 }
+
+function get_user_movies() {
+  $("ol#user_movies").empty();
+
+  const container = d3.select('ol#user_movies');
+  container.selectAll('li')
+    .data(activeData)
+    .join('li')
+    .text(d => d.title + ', ' + d.year);
+}
+
 function clearData() {
   activeData = [];
   make_plot(activeData);
-
+  get_user_movies();
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
