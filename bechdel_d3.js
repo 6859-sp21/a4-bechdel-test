@@ -13,14 +13,18 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
 });
 
 d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData1) => {
-   all_search_data = bechdelData1.filter(d => parseInt(d.year) >= 2000);
+   all_search_data = bechdelData1;
 
    // Make a list of Movie Names for Search
    movie_names = []
    movie_names = all_search_data.map(m => m.title+', '+m.year);
 
    $( "#movie_search_box" ).autocomplete({
-     source: movie_names,
+     source: function(request, response) {
+        var results = $.ui.autocomplete.filter(movie_names, request.term);
+
+        response(results.slice(0, 100));
+    },
      select: function(event, ui) {
          if(ui.item){
              // $('#movie_search_box').val(ui.item.value); //default functionality.
@@ -177,7 +181,7 @@ function make_plot(data) {
     .data(data)
     .transition()
       .duration(750)
-      .attrTween("d", arcTween);
+      // .attrTween("d", arcTween);
 
   svg.selectAll("path")
     .data(data)
@@ -290,7 +294,7 @@ const menu = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
         {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
-        {'icon': 'sort', 'name': 'sort/unsort',  action: () => sortData()  },
+        {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]
 });
