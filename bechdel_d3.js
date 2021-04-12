@@ -104,7 +104,7 @@ function make_plot(data) {
     .style("width", "100%")
     .style("height", "100%")
     .append("g")
-  
+
   x = d3.scaleBand()
     .domain(data.map(d => `${d.title} (${d.year}`))
     .range([0, 2 * Math.PI])
@@ -189,7 +189,7 @@ function make_plot(data) {
         .style("opacity", 0.5)
       tooltip.html("Movie Title: " + d.title)
         .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
-    })  
+    })
     .on("mouseout", function(){
       tooltip.transition()
         .duration(300)
@@ -239,7 +239,55 @@ function sortData() {
   } else { // time to unsort
     currentData = unsortedData
     make_plot(unsortedData)
-    
+
 
   }
 }
+
+function clearData() {
+  activeData = [];
+  make_plot(activeData);
+
+}
+
+// Context Menu Stuff
+
+const menu = new ContextMenu({
+      'theme': 'default', // or 'blue'
+      'items': [
+        {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
+        {'icon': 'download', 'name': 'Script',  action: () => console.log('Script')  },
+        {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
+      ]
+});
+
+function openContextMenu(evt){
+
+  // prevent default event
+  evt.preventDefault();
+
+  // open the menu with a delay
+  const time = menu.isOpen() ? 100 : 0;
+
+  // hide the current menu (if any)
+  menu.hide();
+
+  // display menu at mouse click position
+  setTimeout(() => { menu.show(evt.pageX, evt.pageY) }, time);
+
+  // close the menu if the user clicks anywhere on the screen
+  document.addEventListener('click', hideContextMenu, false);
+
+}
+
+function hideContextMenu(evt){
+
+  // hide the menu
+  menu.hide();
+
+  // remove the listener from the document
+  document.removeEventListener('click', hideContextMenu);
+
+}
+
+document.addEventListener('contextmenu', openContextMenu, false);
