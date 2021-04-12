@@ -6,6 +6,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   activeData = [];
   currentData = all_data.slice(1600)
   unsortedData = [];
+  sorted = false;
   // Make a list of Movie Names for Search
   movie_names = []
   movie_names = all_data.map(m => m.title+', '+m.year);
@@ -165,7 +166,7 @@ function make_plot(data) {
       .each(function(d) {this._current = d})
 
       // .transition().duration(750).attrTween("d", arcTween)
-  
+
   svg.selectAll("path")
     .data(data)
     .transition()
@@ -233,7 +234,7 @@ function change_genre() {
     if (activeData.length > 0){ // if we've used activeData in searches
       genre_data = activeData
     } else {
-      genre_data = all_data.slice(1600) // TODO decide on default 
+      genre_data = all_data.slice(1600) // TODO decide on default
     }
   } else {
     genre_data = all_data.filter(d => d.genre.match(genre));
@@ -245,14 +246,17 @@ function change_genre() {
 
 function sortData() {
   // console.log(document.getElementById('sort-data').checked)
-  if (document.getElementById('sort-data').checked) { // sort
+  // if (document.getElementById('sort-data').checked) { // sort
+  if (!sorted) { // sort
     unsortedData = [...currentData];
+    sorted = true;
     currentData.sort(function(x, y){
       return d3.ascending(x.rating, y.rating);
     })
     make_plot(currentData);
   } else { // time to unsort
     currentData = unsortedData
+    sorted=false;
     make_plot(unsortedData)
 
 
@@ -271,10 +275,11 @@ const menu = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
         {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
-        {'icon': 'download', 'name': 'Script',  action: () => console.log('Script')  },
+        {'icon': 'sort', 'name': 'sort/unsort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]
 });
+
 
 function openContextMenu(evt){
 
