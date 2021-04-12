@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Load d3.js -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Work+Sans&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="context-menu.js"></script>
+    <script src="https://kit.fontawesome.com/a12df70fac.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link href="context-menu.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1 id='title'>Your Bechdel Score</h1>
+
+    <!-- input box for gene search -->
+    <div id='movie_search_container'>
+      <input id='movie_search_box' type="text" placeholder="Search for a movie to add">
+    </div>
+
+
+    <select id="select_genre" onchange="change_genre()">
+      <option>Select Genre</option>
+      <option>Action</option>
+      <option>Adventure</option>
+      <option>Animation</option>
+      <option>Biography</option>
+      <option>Comedy</option>
+      <option>Crime</option>
+      <option>Documentary</option>
+      <option>Drama</option>
+      <option>Family</option>
+      <option>Fantasy</option>
+      <option>History</option>
+      <option>Horror</option>
+      <option>Music</option>
+      <option>Musical</option>
+      <option>Mystery</option>
+      <option>Romance</option>
+      <option>Sci-Fi</option>
+      <option>Sport</option>
+      <option>Thriller</option>
+      <option>War</option>
+      <option>Western</option>
+    </select>
+
+    <!-- <div>
+      <label><input id="sort-data" onchange="sortData()" type="checkbox"> Sort values</label>
+    </div> -->
+
+
+    <!-- <div id="chart" style="width:520px;height:420px;">
+    </div> -->
+
+    <div id="container">
+      <div id="vis"></div>
+      <div id="placeholder"></div>
+
+      <div id="explanation">
+        <h1>The Bechdel Test</h1>
+        <p>The Bechdel test originated in this comic, created by the cartoonist Alison Bechdel, encapsulating ideas she
+        credits to her friend Liz Wallace. It has three components.</p>
+        <ol>
+          <li>The film contains at least two named women.</li>
+          <li>These women have a conversation on screen.</li>
+          <li>The conversation is about something other than a man.</li>
+        </ol>
+        <p>Although these requirements seem simple, many movies fail the Bechdel Test. Some don't even meet the first condition.</p>
+        <p>Try adding your favorite movies to the visualization - how well are women represented in the movies you like to watch?</p>
+      </div>
+
+      <div id="comic">
+        <img src="https://cdn.vox-cdn.com/thumbor/D4Tr1mvjnxj0mLUrkmaIjLWf1GA=/1400x0/filters:no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/6229349/The-Rule-cleaned-up.jpg" width="60%"/>
+      </div>
+      <div id="placeholder"></div>
+    </div>
+
+
+
+    <script src='bechdel_d3.js'></script>
+
+  </body>
+</html>
