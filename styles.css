@@ -126,3 +126,19 @@ button {
     font-size: 16px;
     padding: 4px;
 }
+
+#genre {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.genre_vis {
+    width: calc(100% / 3);
+}
+
+.genre_select {
+    width: calc(100% / 3);
+    display: flex;
+    justify-content: center;
+}
