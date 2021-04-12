@@ -5,6 +5,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   all_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
   currentData = all_data.slice(1600)
+  unsortedData = [];
   // Make a list of Movie Names for Search
   movie_names = []
   movie_names = all_data.map(m => m.title+', '+m.year);
@@ -87,7 +88,6 @@ function make_stats(data) {
 function make_plot(data) {
   let checked = false;
   $("div#vis").empty(); // prevent accumulation of stats
-  console.log(data)
   const margin = 200;
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
@@ -223,15 +223,26 @@ function change_genre() {
   var e = document.getElementById("select_genre");
   var genre = e.options[e.selectedIndex].text;
   genre_data = all_data.filter(d => d.genre.match(genre));
-  currentData = genre_data
-  make_stats(genre_data);
-  make_plot(genre_data);
+  // bug where no selected genre needs to go back to
+  currentData = genre_data;
+  unsortedData = genre_data;
+  sortData();
+  // make_stats(genre_data);
+  // make_plot(genre_data);
 }
 
 function sortData() {
-  
-  currentData.sort(function(x, y){
-    return d3.ascending(x.rating, y.rating);
-  })
-  make_plot(currentData);
+  // console.log(document.getElementById('sort-data').checked)
+  if (document.getElementById('sort-data').checked) { // sort
+    unsortedData = [...currentData];
+    currentData.sort(function(x, y){
+      return d3.ascending(x.rating, y.rating);
+    })
+    make_plot(currentData);
+  } else { // time to unsort
+    currentData = unsortedData
+    make_plot(unsortedData)
+    
+
+  }
 }
