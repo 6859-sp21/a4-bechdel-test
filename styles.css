@@ -1,5 +1,6 @@
 h1 {
-    font-family: 'Montserrat', sans-serif;
+    /* font-family: 'Montserrat', sans-serif; */
+    font-family: 'Cutive Mono', monospace;
 }
 
 #title {
@@ -9,7 +10,9 @@ h1 {
 }
 
 p, li, div, select {
-    font-family: 'Work Sans', sans-serif;
+    /* font-family: 'Work Sans', sans-serif; */
+    font-family: 'Cutive Mono', monospace;
+
 }
 
 .ui-autocomplete {
@@ -32,7 +35,9 @@ p, li, div, select {
     -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     background-clip: padding-box;
-    font-family: 'Work Sans', sans-serif;
+    /* font-family: 'Work Sans', sans-serif; */
+    font-family: 'Cutive Mono', monospace;
+
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -115,14 +120,18 @@ p, li, div, select {
 #movie_search_box {
     width: 40%;
     font-size: 24px;
-    font-family: 'Work Sans', sans-serif;
+    /* font-family: 'Work Sans', sans-serif; */
+    font-family: 'Cutive Mono', monospace;
+
     padding: 3px;
     padding-left: 10px;
 }
 
 button {
     width: 45%;
-    font-family: 'Work Sans', sans-serif;
+    /* font-family: 'Work Sans', sans-serif; */
+    font-family: 'Cutive Mono', monospace;
+
     font-size: 16px;
     padding: 4px;
 }
