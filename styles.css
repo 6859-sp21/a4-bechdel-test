@@ -92,11 +92,19 @@ p, li {
     width: 60%;
 }
 
+#comic_explanation {
+    padding-top: 100px;
+    padding-left: 10%;
+    width: 50%;
+}
+
 #comic {
     display: flex;
     justify-content: center;
-    width: 60%;
-    margin-top: 100px
+    align-items: flex-start;
+    width: 30%;
+    padding-top: 100px;
+    padding-right: 10%;
 }
 
 #placeholder {
