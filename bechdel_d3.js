@@ -9,7 +9,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   sorted = false;
 
   // generic loading in
-  make_plot(all_genre_data.slice(1600))
+  make_plot(all_genre_data.slice(1600), 0)
 
   document.getElementById('genre_select1').value = "Animation";
   change_genre(1);
@@ -61,7 +61,7 @@ function find_movie(search_title){
     //add the movie to the active list and re generate visualization/stats
     activeData.push(all_search_data[index]);
     currentData = activeData;
-    make_plot(activeData);
+    make_plot(activeData, 0);
     get_user_movies()
     $('#movie_search_box').val('');
   }
@@ -103,8 +103,8 @@ function make_stats(data) {
     .text(d => d.name);
 }
 
-function make_plot(data) {
-  $("div#vis").empty(); // prevent accumulation of stats
+function make_plot(data, num) {
+  $("div#vis" + num).empty(); // prevent accumulation of stats
   const margin = 200;
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
@@ -117,7 +117,7 @@ function make_plot(data) {
       outerRadius = width / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
 
   // append the svg object to the body of the page
-  var svg = d3.select("div#vis")
+  var svg = d3.select("div#vis" + num)
     .append("svg")
     .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
     .style("width", "100%")
@@ -196,8 +196,27 @@ function make_plot(data) {
   //   .data(data)
   //   .exit().remove()
 
+  // center percentage
+
+  const passData = data.filter(d => parseInt(d.rating) === 3);
+  const passCount = d3.count(passData, d => d.rating);
+  const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
+
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr('y', -8)
+    .attr('font-size', '2em')
+    // .attr('width', innerRadius * 2)
+    .text(`${passRate}%`)
+
+    svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr('y', 20)
+    .attr('font-size', '2em')
+    .text(`passed`)
+
   // tooltips
-  var tooltip = d3.select("div#vis").append("div")
+  var tooltip = d3.select("div#vis" + num).append("div")
     .attr("class", "tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
@@ -255,11 +274,11 @@ function sortData() {
     currentData.sort(function(x, y){
       return d3.ascending(x.rating, y.rating);
     })
-    make_plot(currentData);
+    make_plot(currentData, 0);
   } else { // time to unsort
     currentData = unsortedData
     sorted=false;
-    make_plot(unsortedData)
+    make_plot(unsortedData, 0)
 
 
   }
@@ -290,12 +309,12 @@ function get_user_movies() {
 
 function clearData() {
   activeData = [];
-  make_plot(activeData);
+  (activeData);
   get_user_movies();
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
-  make_plot(currentData)
+  make_plot(currentData, 0)
 }
 
 // Context Menu Stuff
@@ -380,134 +399,6 @@ function hideContextMenu(evt){
 
 document.addEventListener('contextmenu', openContextMenu, false);
 
-function make_genre_plot(data, num) {
-  $("div#genre_vis" + num).empty(); // prevent accumulation of stats
-  const margin = 200;
-  const colorScale = d3.scaleOrdinal()
-    .domain([0, 1, 2, 3])
-    .range(d3.schemeTableau10)
-
-  // set the dimensions and margins of the graph
-  var width = 1000,
-      height = 700,
-      innerRadius = 80,
-      outerRadius = width / 2 - margin;   // the outerRadius goes from the middle of the SVG area to the border
-
-  // append the svg object to the body of the page
-  var svg = d3.select("div#genre_vis" + num)
-    .append("svg")
-    .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
-    .style("width", "100%")
-    .style("height", "100%")
-    .append("g")
-
-  x = d3.scaleBand()
-    .domain(data.map(d => `${d.title} (${d.year}`))
-    .range([0, 2 * Math.PI])
-    .align(0)
-
-  y = d3.scaleRadial()
-      .domain([0, 3])
-      .range([innerRadius+50, outerRadius])
-
-  yAxis = g => g
-      .attr("text-anchor", "middle")
-      // .call(g => g.append("text")
-      //     .attr("y", d => -y(y.ticks(5).pop()))
-      //     .attr("dy", "-1em"))
-          // .text("Bechdel Test Score"))
-      .call(g => g.selectAll("g")
-        .data(y.ticks(4))
-        .join("g")
-          .attr("fill", "none")
-          .call(g => g.append("circle")
-              .attr("stroke", "#000")
-              .attr("stroke-opacity", 0.5)
-              .attr("r", y))
-          .call(g => g.append("text")
-              .attr("y", d => -y(d))
-              .attr("dy", "0.35em")
-              .attr("stroke", "#fff")
-              .attr("stroke-width", 5)
-              .text(y.tickFormat(4, "s"))
-           .clone(true)
-              .attr("fill", "#000")
-              .attr("stroke", "none")))
-
-
-  arc = d3.arc()
-    .innerRadius(innerRadius)
-    .outerRadius(d => y(parseInt(d.rating)))
-    .startAngle(d => x(`${d.title} (${d.year}`))
-    .endAngle(d => x(`${d.title} (${d.year}`) + x.bandwidth())
-    .padAngle(0.03)
-    .padRadius(innerRadius)
-
-  function arcTween(a) {
-      // console.log(a)
-      // console.log(this._current)
-      var i = d3.interpolate(this._current, a);
-      this._current = i(0);
-      return function(t) {
-        return arc(i(t));
-      };
-    }
-  svg.selectAll("path")
-    .data(data)
-    .enter()
-    .append("path")
-      .attr("fill", d => colorScale(d.rating))
-      .attr("d", arc)
-      .each(function(d) {this._current = d})
-
-      // .transition().duration(750).attrTween("d", arcTween)
-
-  svg.selectAll("path")
-    .data(data)
-    .transition()
-      .duration(750)
-      // .attrTween("d", arcTween);
-
-  svg.selectAll("path")
-    .data(data)
-    .exit().remove()
-
-  // tooltips
-  var tooltip = d3.select("div#genre_vis" + num).append("div")
-    .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("z-index", "10")
-      .style("visibility", "hidden")
-      .style("background", "white")
-      .style("padding", "10px")
-      .style("border-radius", "10px")
-      .style("width", "300px")
-
-  svg.selectAll("path")
-    .on("mouseover", function(event, d) {
-      tooltip.transition()
-        .duration(200)
-        .style("opacity", 0.9)
-        .style("visibility", "visible")})
-    .on("mousemove", function(event, d) {
-      d3.select(this)
-        .style("opacity", 0.5)
-      tooltip.html("Movie Title: " + d.title)
-        .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
-    })
-    .on("mouseout", function(){
-      tooltip.transition()
-        .duration(300)
-        .style("opacity", 0)
-        .style("visiblity", 'hidden')
-      d3.select(this)
-        .style("opacity", 1.0)})
-
-    // add y axis labels
-    svg.append("g")
-      .call(yAxis)
-}
-
 function change_genre(num) {
   var e = document.getElementById("genre_select" + num);
   var genre = e.options[e.selectedIndex].text;
@@ -515,5 +406,5 @@ function change_genre(num) {
   genre_data.sort(function(x, y){
     return d3.ascending(x.rating, y.rating);
   })
-  make_genre_plot(genre_data, num);
+  make_plot(genre_data, num);
 }
