@@ -47,6 +47,20 @@ function find_movie(search_title){
   }
 };
 
+function sortDataByRatings(data) {
+  function compareRating(a,b) {
+    let comparison = 0;
+    if (a.rating > b.rating) {
+      comparison = 1
+    } else if (a.rating < b.rating) {
+      comparison = 01
+    } return comparison;
+  }
+  sortedData = [...data]
+  sortedData.sort(compareRating)
+  return sortedData
+}
+
 
 function make_stats(data) {
   $("div#stats").empty(); // prevent accumulation of stats
@@ -83,10 +97,10 @@ function make_stats(data) {
     .style('justify-content', 'center')
     .text(d => d.name);
 }
-
 function make_plot(data) {
+  let checked = false;
   $("div#vis").empty(); // prevent accumulation of stats
-
+  console.log(data)
   const margin = 200;
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
@@ -106,8 +120,6 @@ function make_plot(data) {
     .style("height", "auto")
     .append("g")
   
-
-
   x = d3.scaleBand()
     .domain(data.map(d => d.title))
     .range([0, 2 * Math.PI])
@@ -141,20 +153,24 @@ function make_plot(data) {
               .attr("fill", "#000")
               .attr("stroke", "none")))
 
+
   arc = d3.arc()
     .innerRadius(innerRadius)
     .outerRadius(d => y(parseInt(d.rating)))
     .startAngle(d => x(d.title))
     .endAngle(d => x(d.title) + x.bandwidth())
-    .padAngle(0.01)
+    .padAngle(0.03)
     .padRadius(innerRadius)
-  
-  var tooltip = d3.select("div#stats").append("div")
-    .attr("class", "tooltip")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("visibility", "hidden")
 
+  function arcTween(a) {
+      console.log(a)
+      console.log(this._current)
+      var i = d3.interpolate(this._current, a);
+      this._current = i(0);
+      return function(t) {
+        return arc(i(t));
+      };
+    }
   svg.append("g")
     .selectAll("path")
     .data(data)
@@ -162,26 +178,55 @@ function make_plot(data) {
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
-        .on("mouseover", function(event, d) {
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9)
-            .style("visibility", "visible")})
-        .on("mousemove", function(event, d) {
-          d3.select(this)
-            .style("opacity", 0.5)
-          tooltip.html("Movie Title: " + d.title)
-            .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
-            .style("background", colorScale(d.rating))
-            .style("padding", "10px")})
-        .on("mouseout", function(){
-          tooltip.transition()
-            .duration(300)
-            .style("opacity", 0)
-          d3.select(this)
-            .style("opacity", 1.0)
-          return tooltip.style("visibility", "hidden");});
+      .each(function(d) {this._current = d})
+      .transition().duration(750).attrTween("d", arcTween)
 
+
+  // tooltips
+  var tooltip = d3.select("div#stats").append("div")
+    .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("background", "white")
+      .style("padding", "10px")
+      .style("border-radius", "10px")
+      .style("width", "300px")
+
+  svg.selectAll("path")
+    .on("mouseover", function(event, d) {
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", 0.9)
+        .style("visibility", "visible")})
+    .on("mousemove", function(event, d) {
+      d3.select(this)
+        .style("opacity", 0.5)
+      tooltip.html("Movie Title: " + d.title)
+        .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
+    })  
+    .on("mouseout", function(){
+      tooltip.transition()
+        .duration(300)
+        .style("opacity", 0)
+        .style("visiblity", 'hidden')
+      d3.select(this)
+        .style("opacity", 1.0)})
+
+  //  sorting
+  function change() {
+    if (checked) {
+      svg.selectAll("path")
+      .sort(function(a, b) {return b.rating - a.rating})
+
+    } else{
+      arc.sort(function(a, b){return a.rating - b.rating})
+    }
+  }
+
+  d3.select("input").on("change", change);
+
+ 
   // add movie titles
   // svg.append("g")
   //     .selectAll("g")
@@ -199,4 +244,6 @@ function make_plot(data) {
     // add y axis labels
     svg.append("g")
       .call(yAxis)
+    
+
 }
