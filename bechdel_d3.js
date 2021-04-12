@@ -138,6 +138,7 @@ function make_plot(data) {
               .attr("fill", "#000")
               .attr("stroke", "none")))
 
+// d3 is not sure what is being entered + being updated perhaps
 
   arc = d3.arc()
     .innerRadius(innerRadius)
@@ -148,14 +149,13 @@ function make_plot(data) {
     .padRadius(innerRadius)
 
   function arcTween(a) {
-      // console.log(a)
-      // console.log(this._current)
       var i = d3.interpolate(this._current, a);
       this._current = i(0);
       return function(t) {
         return arc(i(t));
       };
     }
+
   svg.selectAll("path")
     .data(data)
     .enter()
@@ -163,18 +163,17 @@ function make_plot(data) {
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
-
-      // .transition().duration(750).attrTween("d", arcTween)
+      .transition().duration(750).attrTween("d", arcTween)
   
-  svg.selectAll("path")
-    .data(data)
-    .transition()
-      .duration(750)
-      .attrTween("d", arcTween);
+  // svg.selectAll("path")
+  //   .data(data)
+  //   .transition()
+  //     .duration(750)
+  //     .attrTween("d", arcTween);
 
-  svg.selectAll("path")
-    .data(data)
-    .exit().remove()
+  // svg.selectAll("path")
+  //   .data(data)
+  //   .exit().remove()
 
   // tooltips
   var tooltip = d3.select("div#vis").append("div")
@@ -244,7 +243,6 @@ function change_genre() {
 }
 
 function sortData() {
-  // console.log(document.getElementById('sort-data').checked)
   if (document.getElementById('sort-data').checked) { // sort
     unsortedData = [...currentData];
     currentData.sort(function(x, y){
