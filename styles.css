@@ -88,6 +88,7 @@ p, li, div, select {
     display: flex;
     justify-content: center;
     width: 60%;
+    margin-top: 100px
 }
 
 #placeholder {
