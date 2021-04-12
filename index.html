@@ -7,98 +7,52 @@
     <script src="https://d3js.org/d3.v6.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-    <style>
-    h1 {
-      font-family: 'Montserrat', sans-serif;
-    }
-    p, li, div {
-      font-family: 'Work Sans', sans-serif;
-    }
-    .ui-autocomplete {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000;
-      display: none;
-      float: left;
-      min-width: 160px;
-      padding: 5px 0;
-      margin: 2px 0 0;
-      list-style: none;
-      font-size: 14px;
-      text-align: left;
-      background-color: #ffffff;
-      border: 1px solid #cccccc;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      border-radius: 4px;
-      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      background-clip: padding-box;
-      font-family: 'Work Sans', sans-serif;
-      max-height: 400px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      z-index:1000 !important;
-    }
-
-    .ui-autocomplete > li > div {
-      display: block;
-      padding: 3px 20px;
-      clear: both;
-      font-weight: normal;
-      line-height: 1.42857143;
-      color: #333333;
-      white-space: nowrap;
-      font-family: 'Work Sans', sans-serif;
-    }
-
-.ui-state-hover,
-.ui-state-active,
-.ui-state-focus {
-  text-decoration: none;
-  color: #262626;
-  background-color: #f5f5f5;
-  cursor: pointer;
-}
-
-  .ui-helper-hidden-accessible {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
-    /* IE 6 doesn't support max-height
-    * we use height instead, but this forces the menu to always be this tall
-    */
-    * html .ui-autocomplete {
-      height: 100px;
-    } */
-  </style>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <h1 style="display:flex;justify-content:center;font-size:64px;">Your Bechdel Score</h1>
+    <h1 id='title'>Your Bechdel Score</h1>
 
     <!-- input box for gene search -->
-    <div id='movie_search_container' style="display:flex;justify-content:center;margin-bottom:10px">
-        <input id='movie_search_box' style="width:20%;font-family:'Work Sans',sans-serif;" type="text" placeholder="Search for a movie to add">
-
+    <div id='movie_search_container'>
+      <input id='movie_search_box' type="text" placeholder="Search for a movie to add">
     </div>
+
+
+    <select id="select_genre" onchange="change_genre()">
+      <option>Select Genre</option>
+      <option>Action</option>
+      <option>Adventure</option>
+      <option>Animation</option>
+      <option>Biography</option>
+      <option>Comedy</option>
+      <option>Crime</option>
+      <option>Documentary</option>
+      <option>Drama</option>
+      <option>Family</option>
+      <option>Fantasy</option>
+      <option>History</option>
+      <option>Horror</option>
+      <option>Music</option>
+      <option>Musical</option>
+      <option>Mystery</option>
+      <option>Romance</option>
+      <option>Sci-Fi</option>
+      <option>Sport</option>
+      <option>Thriller</option>
+      <option>War</option>
+      <option>Western</option>
+    </select>
+
 
     <!-- <div id="chart" style="width:520px;height:420px;">
     </div> -->
-    <div id="stats" style="display:flex;flex-flow:row wrap"></div>
+    <div id="stats"></div>
 
-      <div id="stats"></div>
+    <div id="container">
+      <div id="vis"></div>
+      <div id="placeholder"></div>
 
-      <div style="display:flex;flex-direction:row;">
-      <div id="vis" style="display:flex;justify-content:center; margin: auto; width: 80%"></div>
-      <label><input type="checkbox"> Sort values</label>
-
-      <div style="width:40%;display:flex;flex-direction:column;justify-content:center;">
+      <div id="explanation">
         <h1>The Bechdel Test</h1>
         <p>The Bechdel test originated in this comic, created by the cartoonist Alison Bechdel, encapsulating ideas she
         credits to her friend Liz Wallace. It has three components.</p>
@@ -110,13 +64,11 @@
         <p>Although these requirements seem simple, many movies fail the Bechdel Test. Some don't even meet the first condition.</p>
         <p>Try adding your favorite movies to the visualization - how well are women represented in the movies you like to watch?</p>
       </div>
+
+      <div id="comic">
+        <img src="https://cdn.vox-cdn.com/thumbor/D4Tr1mvjnxj0mLUrkmaIjLWf1GA=/1400x0/filters:no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/6229349/The-Rule-cleaned-up.jpg" width="60%"/>
       </div>
-    </div>
-
-    <div id="Explanation" style="display:flex;justify-content:center">
-      <img src="https://cdn.vox-cdn.com/thumbor/D4Tr1mvjnxj0mLUrkmaIjLWf1GA=/1400x0/filters:no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/6229349/The-Rule-cleaned-up.jpg"
-           width="800"/>
-
+      <div id="placeholder"></div>
     </div>
 
 
