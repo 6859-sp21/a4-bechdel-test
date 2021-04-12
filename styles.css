@@ -1,6 +1,7 @@
 h1 {
     /* font-family: 'Montserrat', sans-serif; */
     font-family: 'Cutive Mono', monospace;
+    font-family: 'Libre Baskerville', serif;
 }
 
 #title {
@@ -12,12 +13,16 @@ h1 {
 #question {
     display: flex;
     justify-content: center;
+    /* font-style: italic; */
 }
 
-h3, p, li, div, select {
+h2, h3, p, li, div, select {
     font-family: 'Cutive Mono', monospace;
 }
 
+p, li {
+  font-size: 18px;
+}
 .ui-autocomplete {
     position: absolute;
     top: 100%;
