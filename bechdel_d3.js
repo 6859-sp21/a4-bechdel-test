@@ -157,6 +157,7 @@ function make_plot(data) {
               .attr("fill", "#000")
               .attr("stroke", "none")))
 
+// d3 is not sure what is being entered + being updated perhaps
 
   arc = d3.arc()
     .innerRadius(innerRadius)
@@ -167,20 +168,20 @@ function make_plot(data) {
     .padRadius(innerRadius)
 
   function arcTween(a) {
-      // console.log(a)
-      // console.log(this._current)
       var i = d3.interpolate(this._current, a);
       this._current = i(0);
       return function(t) {
         return arc(i(t));
       };
     }
+
   svg.selectAll("path")
     .data(data)
     .enter()
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
+      .on("contextmenu", openContextMenu1)
       .each(function(d) {this._current = d})
 
       // .transition().duration(750).attrTween("d", arcTween)
@@ -191,9 +192,9 @@ function make_plot(data) {
       .duration(750)
       // .attrTween("d", arcTween);
 
-  svg.selectAll("path")
-    .data(data)
-    .exit().remove()
+  // svg.selectAll("path")
+  //   .data(data)
+  //   .exit().remove()
 
   // tooltips
   var tooltip = d3.select("div#vis").append("div")
@@ -292,18 +293,60 @@ function clearData() {
   make_plot(activeData);
   get_user_movies();
 }
+function removeElement() {
+  currentData.splice(menu1.selected, 1);
+  make_plot(currentData)
+}
 
 // Context Menu Stuff
 
 const menu = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
-        {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
         {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]
 });
 
+const menu1 = new ContextMenu({
+      'theme': 'default', // or 'blue'
+      'items': [
+        {'icon': 'minus-square', 'name': 'delete',  action: () => removeElement()  },
+        {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
+        {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
+      ]
+});
+
+function openContextMenu1(evt){
+
+  // prevent default event
+  evt.preventDefault();
+  //pre-remove the
+  menu1.selected = (currentData.indexOf(evt.toElement.__data__));
+  // open the menu with a delay
+  const time = menu1.isOpen() ? 100 : 0;
+
+  // hide the current menu (if any)
+  menu1.hide();
+  menu.hide()
+
+  // display menu at mouse click position
+  setTimeout(() => { menu1.show(evt.pageX, evt.pageY) }, time);
+
+  // close the menu if the user clicks anywhere on the screen
+  document.addEventListener('click', hideContextMenu1, false);
+
+}
+
+function hideContextMenu1(evt){
+
+  // hide the menu
+  menu1.hide();
+
+  // remove the listener from the document
+  document.removeEventListener('click', hideContextMenu1);
+
+}
 
 function openContextMenu(evt){
 
@@ -311,10 +354,11 @@ function openContextMenu(evt){
   evt.preventDefault();
 
   // open the menu with a delay
-  const time = menu.isOpen() ? 100 : 0;
+  const time = menu.isOpen() ? 100 : 100;
 
   // hide the current menu (if any)
   menu.hide();
+  menu1.hide()
 
   // display menu at mouse click position
   setTimeout(() => { menu.show(evt.pageX, evt.pageY) }, time);
