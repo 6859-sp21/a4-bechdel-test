@@ -90,6 +90,7 @@ h3, p, li, div, select {
 #comic {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     width: 60%;
 }
 
