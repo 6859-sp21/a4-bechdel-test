@@ -8,7 +8,12 @@ h1 {
     font-size: 60px;
 }
 
-p, li, div, select {
+#question {
+    display: flex;
+    justify-content: center;
+}
+
+h3, p, li, div, select {
     font-family: 'Work Sans', sans-serif;
 }
 
