@@ -76,25 +76,29 @@ p, li, div {
     display: flex;
     justify-content: center;
     margin: auto;
-    width: 70%;
+    width: 60%;
 }
 
 #comic {
     display: flex;
     justify-content: center;
-    width: 70%;
+    width: 60%;
 }
 
 #placeholder {
     width: 30%;
+    padding-right: 10%;
+    display: flex;
+    flex-direction: column;
 }
 
 #explanation {
-    width: 30%;
-    position: fixed;
-    top: 50%;
-    left: 62%;
-    z-index: 100;
+    width: 100%;
+}
+
+#user_list {
+    width: 100%;
+    display: none;
 }
 
 #stats {
@@ -114,4 +118,11 @@ p, li, div {
     font-family: 'Work Sans', sans-serif;
     padding: 3px;
     padding-left: 10px;
+}
+
+button {
+    width: 45%;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    padding: 4px;
 }

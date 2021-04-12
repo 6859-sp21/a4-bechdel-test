@@ -2,36 +2,47 @@
 // See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
 // let url = "https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv"
 d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
-  all_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
+  all_genre_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
-  currentData = all_data.slice(1600)
+  currentData = all_genre_data.slice(1600)
   unsortedData = [];
-  // Make a list of Movie Names for Search
-  movie_names = []
-  movie_names = all_data.map(m => m.title+', '+m.year);
-
-  $( "#movie_search_box" ).autocomplete({
-    source: movie_names,
-    select: function(event, ui) {
-        if(ui.item){
-            // $('#movie_search_box').val(ui.item.value); //default functionality.
-            find_movie(ui.item.value);
-            $('#movie_search_box').val('');
-            return false;
-        }
-    }
-  });
-  // submit movie button
-  $("#movie_search_box").keyup(function (e) {
-      if (e.keyCode == 13) {
-          // Do something
-          // console.log('pressed enter');
-          find_movie($('#movie_search_box').val());
-      }
-  });
+  sorted = false;
 
   // generic loading in
-  make_plot(all_data.slice(1600))
+  make_plot(all_genre_data.slice(1600))
+});
+
+d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData1) => {
+   all_search_data = bechdelData1;
+
+   // Make a list of Movie Names for Search
+   movie_names = []
+   movie_names = all_search_data.map(m => m.title+', '+m.year);
+
+   $( "#movie_search_box" ).autocomplete({
+     source: function(request, response) {
+        var results = $.ui.autocomplete.filter(movie_names, request.term);
+
+        response(results.slice(0, 100));
+    },
+     select: function(event, ui) {
+         if(ui.item){
+             // $('#movie_search_box').val(ui.item.value); //default functionality.
+             find_movie(ui.item.value);
+             $('#movie_search_box').val('');
+             return false;
+         }
+     }
+   });
+   // submit movie button
+   $("#movie_search_box").keyup(function (e) {
+       if (e.keyCode == 13) {
+           // Do something
+           // console.log('pressed enter');
+           find_movie($('#movie_search_box').val());
+       }
+   });
+
 
 });
 
@@ -41,9 +52,10 @@ function find_movie(search_title){
   index = movie_names.indexOf(search_title)
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
-    activeData.push(all_data[index]);
+    activeData.push(all_search_data[index]);
     currentData = activeData;
     make_plot(activeData);
+    get_user_movies()
     $('#movie_search_box').val('');
   }
 };
@@ -104,7 +116,7 @@ function make_plot(data) {
     .style("width", "100%")
     .style("height", "100%")
     .append("g")
-  
+
   x = d3.scaleBand()
     .domain(data.map(d => `${d.title} (${d.year}`))
     .range([0, 2 * Math.PI])
@@ -163,13 +175,14 @@ function make_plot(data) {
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
-      .transition().duration(750).attrTween("d", arcTween)
-  
-  // svg.selectAll("path")
-  //   .data(data)
-  //   .transition()
-  //     .duration(750)
-  //     .attrTween("d", arcTween);
+
+      // .transition().duration(750).attrTween("d", arcTween)
+
+  svg.selectAll("path")
+    .data(data)
+    .transition()
+      .duration(750)
+      // .attrTween("d", arcTween);
 
   // svg.selectAll("path")
   //   .data(data)
@@ -197,7 +210,7 @@ function make_plot(data) {
         .style("opacity", 0.5)
       tooltip.html("Movie Title: " + d.title)
         .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
-    })  
+    })
     .on("mouseout", function(){
       tooltip.transition()
         .duration(300)
@@ -232,10 +245,10 @@ function change_genre() {
     if (activeData.length > 0){ // if we've used activeData in searches
       genre_data = activeData
     } else {
-      genre_data = all_data.slice(1600) // TODO decide on default 
+      genre_data = all_genre_data.slice(1600) // TODO decide on default
     }
   } else {
-    genre_data = all_data.filter(d => d.genre.match(genre));
+    genre_data = all_genre_data.filter(d => d.genre.match(genre));
   }
   currentData = genre_data;
   unsortedData = genre_data;
@@ -243,16 +256,92 @@ function change_genre() {
 }
 
 function sortData() {
-  if (document.getElementById('sort-data').checked) { // sort
+  // console.log(document.getElementById('sort-data').checked)
+  // if (document.getElementById('sort-data').checked) { // sort
+  if (!sorted) { // sort
     unsortedData = [...currentData];
+    sorted = true;
     currentData.sort(function(x, y){
       return d3.ascending(x.rating, y.rating);
     })
     make_plot(currentData);
   } else { // time to unsort
     currentData = unsortedData
+    sorted=false;
     make_plot(unsortedData)
-    
+
 
   }
 }
+
+function toggle_explanation() {
+  var x = document.getElementById("explanation");
+  var y = document.getElementById("user_list");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+    y.style.display = "none";
+  } else {
+    x.style.display = "none";
+    y.style.display = "block";
+    get_user_movies();
+  }
+}
+
+function get_user_movies() {
+  $("ol#user_movies").empty();
+
+  const container = d3.select('ol#user_movies');
+  container.selectAll('li')
+    .data(activeData)
+    .join('li')
+    .text(d => d.title + ', ' + d.year);
+}
+
+function clearData() {
+  activeData = [];
+  make_plot(activeData);
+  get_user_movies();
+}
+
+// Context Menu Stuff
+
+const menu = new ContextMenu({
+      'theme': 'default', // or 'blue'
+      'items': [
+        {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
+        {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
+        {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
+      ]
+});
+
+
+function openContextMenu(evt){
+
+  // prevent default event
+  evt.preventDefault();
+
+  // open the menu with a delay
+  const time = menu.isOpen() ? 100 : 0;
+
+  // hide the current menu (if any)
+  menu.hide();
+
+  // display menu at mouse click position
+  setTimeout(() => { menu.show(evt.pageX, evt.pageY) }, time);
+
+  // close the menu if the user clicks anywhere on the screen
+  document.addEventListener('click', hideContextMenu, false);
+
+}
+
+function hideContextMenu(evt){
+
+  // hide the menu
+  menu.hide();
+
+  // remove the listener from the document
+  document.removeEventListener('click', hideContextMenu);
+
+}
+
+document.addEventListener('contextmenu', openContextMenu, false);
