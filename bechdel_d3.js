@@ -6,6 +6,7 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   activeData = [];
   currentData = all_data.slice(1600)
   unsortedData = [];
+  sorted = false;
   // Make a list of Movie Names for Search
   movie_names = []
   movie_names = all_data.map(m => m.title+', '+m.year);
@@ -83,8 +84,8 @@ function make_stats(data) {
     .style('justify-content', 'center')
     .text(d => d.name);
 }
+
 function make_plot(data) {
-  let checked = false;
   $("div#vis").empty(); // prevent accumulation of stats
   const margin = 200;
   const colorScale = d3.scaleOrdinal()
@@ -104,7 +105,7 @@ function make_plot(data) {
     .style("width", "100%")
     .style("height", "100%")
     .append("g")
-  
+
   x = d3.scaleBand()
     .domain(data.map(d => `${d.title} (${d.year}`))
     .range([0, 2 * Math.PI])
@@ -156,19 +157,28 @@ function make_plot(data) {
         return arc(i(t));
       };
     }
-  svg.append("g")
-    .selectAll("path")
+  svg.selectAll("path")
     .data(data)
     .enter()
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
+
       // .transition().duration(750).attrTween("d", arcTween)
 
+  svg.selectAll("path")
+    .data(data)
+    .transition()
+      .duration(750)
+      .attrTween("d", arcTween);
+
+  svg.selectAll("path")
+    .data(data)
+    .exit().remove()
 
   // tooltips
-  var tooltip = d3.select("div").append("div")
+  var tooltip = d3.select("div#vis").append("div")
     .attr("class", "tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
@@ -189,7 +199,7 @@ function make_plot(data) {
         .style("opacity", 0.5)
       tooltip.html("Movie Title: " + d.title)
         .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
-    })  
+    })
     .on("mouseout", function(){
       tooltip.transition()
         .duration(300)
@@ -220,26 +230,35 @@ function make_plot(data) {
 function change_genre() {
   var e = document.getElementById("select_genre");
   var genre = e.options[e.selectedIndex].text;
-  genre_data = all_data.filter(d => d.genre.match(genre));
-  // bug where no selected genre needs to go back to
+  if (genre === "Select Genre") {
+    if (activeData.length > 0){ // if we've used activeData in searches
+      genre_data = activeData
+    } else {
+      genre_data = all_data.slice(1600) // TODO decide on default
+    }
+  } else {
+    genre_data = all_data.filter(d => d.genre.match(genre));
+  }
   currentData = genre_data;
   unsortedData = genre_data;
   sortData();
-  // make_plot(genre_data);
 }
 
 function sortData() {
   // console.log(document.getElementById('sort-data').checked)
-  if (document.getElementById('sort-data').checked) { // sort
+  // if (document.getElementById('sort-data').checked) { // sort
+  if (!sorted) { // sort
     unsortedData = [...currentData];
+    sorted = true;
     currentData.sort(function(x, y){
       return d3.ascending(x.rating, y.rating);
     })
     make_plot(currentData);
   } else { // time to unsort
     currentData = unsortedData
+    sorted=false;
     make_plot(unsortedData)
-    
+
 
   }
 }
@@ -253,3 +272,51 @@ function toggle_explanation() {
   }
 
 }
+function clearData() {
+  activeData = [];
+  make_plot(activeData);
+
+}
+
+// Context Menu Stuff
+
+const menu = new ContextMenu({
+      'theme': 'default', // or 'blue'
+      'items': [
+        {'icon': 'envelope', 'name': 'jQuery',  action: () => console.log('jQuery')  },
+        {'icon': 'sort', 'name': 'sort/unsort',  action: () => sortData()  },
+        {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
+      ]
+});
+
+
+function openContextMenu(evt){
+
+  // prevent default event
+  evt.preventDefault();
+
+  // open the menu with a delay
+  const time = menu.isOpen() ? 100 : 0;
+
+  // hide the current menu (if any)
+  menu.hide();
+
+  // display menu at mouse click position
+  setTimeout(() => { menu.show(evt.pageX, evt.pageY) }, time);
+
+  // close the menu if the user clicks anywhere on the screen
+  document.addEventListener('click', hideContextMenu, false);
+
+}
+
+function hideContextMenu(evt){
+
+  // hide the menu
+  menu.hide();
+
+  // remove the listener from the document
+  document.removeEventListener('click', hideContextMenu);
+
+}
+
+document.addEventListener('contextmenu', openContextMenu, false);
