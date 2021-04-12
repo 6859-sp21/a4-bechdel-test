@@ -8,7 +8,7 @@ h1 {
     font-size: 60px;
 }
 
-p, li, div {
+p, li, div, select {
     font-family: 'Work Sans', sans-serif;
 }
 
