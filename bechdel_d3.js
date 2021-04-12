@@ -224,7 +224,7 @@ function make_plot(data, num) {
       .style("background", "white")
       .style("padding", "10px")
       .style("border-radius", "10px")
-      .style("width", "300px")
+      .style("width", "200px")
 
   svg.selectAll("path")
     .on("mouseover", function(event, d) {
@@ -235,7 +235,7 @@ function make_plot(data, num) {
     .on("mousemove", function(event, d) {
       d3.select(this)
         .style("opacity", 0.5)
-      tooltip.html("Movie Title: " + d.title)
+      tooltip.html("<b>Movie Title:</b> " + d.title + "<br/> <b>Year: </b>" + d.year)
         .style("top",(event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
     })
     .on("mouseout", function(){
