@@ -168,7 +168,7 @@ function make_plot(data) {
 
 
   // tooltips
-  var tooltip = d3.select("div#stats").append("div")
+  var tooltip = d3.select("div").append("div")
     .attr("class", "tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
