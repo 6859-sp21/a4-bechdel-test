@@ -2,37 +2,43 @@
 // See https://github.com/d3/d3/blob/master/API.md#fetches-d3-fetch for more options.
 // let url = "https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv"
 d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
-  all_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
+  all_genre_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
-  currentData = all_data.slice(1600)
+  currentData = all_genre_data.slice(1600)
   unsortedData = [];
   sorted = false;
-  // Make a list of Movie Names for Search
-  movie_names = []
-  movie_names = all_data.map(m => m.title+', '+m.year);
-
-  $( "#movie_search_box" ).autocomplete({
-    source: movie_names,
-    select: function(event, ui) {
-        if(ui.item){
-            // $('#movie_search_box').val(ui.item.value); //default functionality.
-            find_movie(ui.item.value);
-            $('#movie_search_box').val('');
-            return false;
-        }
-    }
-  });
-  // submit movie button
-  $("#movie_search_box").keyup(function (e) {
-      if (e.keyCode == 13) {
-          // Do something
-          // console.log('pressed enter');
-          find_movie($('#movie_search_box').val());
-      }
-  });
 
   // generic loading in
-  make_plot(all_data.slice(1600))
+  make_plot(all_genre_data.slice(1600))
+});
+
+d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData1) => {
+   all_search_data = bechdelData1.filter(d => parseInt(d.year) >= 2000);
+
+   // Make a list of Movie Names for Search
+   movie_names = []
+   movie_names = all_search_data.map(m => m.title+', '+m.year);
+
+   $( "#movie_search_box" ).autocomplete({
+     source: movie_names,
+     select: function(event, ui) {
+         if(ui.item){
+             // $('#movie_search_box').val(ui.item.value); //default functionality.
+             find_movie(ui.item.value);
+             $('#movie_search_box').val('');
+             return false;
+         }
+     }
+   });
+   // submit movie button
+   $("#movie_search_box").keyup(function (e) {
+       if (e.keyCode == 13) {
+           // Do something
+           // console.log('pressed enter');
+           find_movie($('#movie_search_box').val());
+       }
+   });
+
 
 });
 
@@ -42,7 +48,7 @@ function find_movie(search_title){
   index = movie_names.indexOf(search_title)
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
-    activeData.push(all_data[index]);
+    activeData.push(all_search_data[index]);
     currentData = activeData;
     make_plot(activeData);
     $('#movie_search_box').val('');
@@ -234,10 +240,10 @@ function change_genre() {
     if (activeData.length > 0){ // if we've used activeData in searches
       genre_data = activeData
     } else {
-      genre_data = all_data.slice(1600) // TODO decide on default
+      genre_data = all_genre_data.slice(1600) // TODO decide on default
     }
   } else {
-    genre_data = all_data.filter(d => d.genre.match(genre));
+    genre_data = all_genre_data.filter(d => d.genre.match(genre));
   }
   currentData = genre_data;
   unsortedData = genre_data;
