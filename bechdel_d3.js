@@ -85,6 +85,7 @@ function make_stats(data) {
     .style('justify-content', 'center')
     .text(d => d.name);
 }
+
 function make_plot(data) {
   let checked = false;
   $("div#vis").empty(); // prevent accumulation of stats
@@ -158,19 +159,27 @@ function make_plot(data) {
         return arc(i(t));
       };
     }
-  svg.append("g")
-    .selectAll("path")
+  svg.selectAll("path")
     .data(data)
     .enter()
     .append("path")
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
-      .transition().duration(750).attrTween("d", arcTween)
+      // .transition().duration(750).attrTween("d", arcTween)
+  
+  svg.selectAll("path")
+    .data(data)
+    .transition()
+      .duration(750)
+      .attrTween("d", arcTween);
 
+  svg.selectAll("path")
+    .data(data)
+    .exit().remove()
 
   // tooltips
-  var tooltip = d3.select("div#stats").append("div")
+  var tooltip = d3.select("div#vis").append("div")
     .attr("class", "tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
