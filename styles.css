@@ -87,12 +87,19 @@ h3, p, li, div, select {
     width: 60%;
 }
 
+#comic_explanation {
+    padding-top: 100px;
+    padding-left: 10%;
+    width: 50%;
+}
+
 #comic {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    width: 60%;
-    margin-top: 100px
+    width: 30%;
+    padding-top: 100px;
+    padding-right: 10%;
 }
 
 #placeholder {
