@@ -11,11 +11,11 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   // generic loading in
   make_plot(all_genre_data.slice(1600))
 
-  document.getElementById('genre_select1').value = "Action";
+  document.getElementById('genre_select1').value = "Animation";
   change_genre(1);
-  document.getElementById('genre_select2').value = "Adventure";
+  document.getElementById('genre_select2').value = "Romance";
   change_genre(2);
-  document.getElementById('genre_select3').value = "Animation";
+  document.getElementById('genre_select3').value = "Fantasy";
   change_genre(3);
 });
 
