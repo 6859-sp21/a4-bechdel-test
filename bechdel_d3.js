@@ -31,7 +31,6 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
   });
 
   // generic loading in
-  make_stats(all_data);
   make_plot(all_data.slice(1600))
 
 });
@@ -44,7 +43,6 @@ function find_movie(search_title){
     //add the movie to the active list and re generate visualization/stats
     activeData.push(all_data[index]);
     currentData = activeData;
-    make_stats(activeData);
     make_plot(activeData);
     $('#movie_search_box').val('');
   }
@@ -166,7 +164,7 @@ function make_plot(data) {
       .attr("fill", d => colorScale(d.rating))
       .attr("d", arc)
       .each(function(d) {this._current = d})
-      .transition().duration(750).attrTween("d", arcTween)
+      // .transition().duration(750).attrTween("d", arcTween)
 
 
   // tooltips
@@ -227,7 +225,6 @@ function change_genre() {
   currentData = genre_data;
   unsortedData = genre_data;
   sortData();
-  // make_stats(genre_data);
   // make_plot(genre_data);
 }
 
