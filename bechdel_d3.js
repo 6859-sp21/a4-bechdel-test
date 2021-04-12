@@ -55,6 +55,7 @@ function find_movie(search_title){
     activeData.push(all_search_data[index]);
     currentData = activeData;
     make_plot(activeData);
+    get_user_movies()
     $('#movie_search_box').val('');
   }
 };
@@ -275,17 +276,31 @@ function sortData() {
 
 function toggle_explanation() {
   var x = document.getElementById("explanation");
+  var y = document.getElementById("user_list");
   if (x.style.display === "none") {
     x.style.display = "block";
+    y.style.display = "none";
   } else {
     x.style.display = "none";
+    y.style.display = "block";
+    get_user_movies();
   }
-
 }
+
+function get_user_movies() {
+  $("ol#user_movies").empty();
+
+  const container = d3.select('ol#user_movies');
+  container.selectAll('li')
+    .data(activeData)
+    .join('li')
+    .text(d => d.title + ', ' + d.year);
+}
+
 function clearData() {
   activeData = [];
   make_plot(activeData);
-
+  get_user_movies();
 }
 
 // Context Menu Stuff
