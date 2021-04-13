@@ -294,9 +294,11 @@ function clearData() {
   activeData = [];
   (activeData);
   get_user_movies();
+  make_plot(activeData, 0);
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
+  get_user_movies();
   make_plot(currentData, 0)
 }
 
@@ -313,7 +315,7 @@ const menu = new ContextMenu({
 const menu1 = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
-        {'icon': 'minus-square', 'name': 'delete',  action: () => removeElement()  },
+        {'icon': 'minus-square', 'name': 'Delete',  action: () => removeElement()  },
         {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]

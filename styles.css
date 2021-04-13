@@ -6,7 +6,7 @@ h1 {
     font-family: 'Libre Baskerville', serif;
 }
 
-h2, h3, p, li, div, select, .ui-autocomplete, #movie_search_box, button {
+h2, h3, p, li, div, select, .ui-autocomplete, #movie_search_box, button, .context-menu-default-text {
     font-family: 'Cutive Mono', monospace;
 }
 
