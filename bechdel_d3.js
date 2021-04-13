@@ -67,42 +67,6 @@ function find_movie(search_title){
   }
 };
 
-function make_stats(data) {
-  $("div#stats").empty(); // prevent accumulation of stats
-
-  const passData = data.filter(d => parseInt(d.rating) === 3);
-  const passCount = d3.count(passData, d => d.rating);
-  const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
-
-  const avgIMDbRating = Math.round(d3.mean(data, d => d.imdb_rating) * 10) / 10; // round to one decimal point
-
-  const avgDomGross = Math.round(d3.mean(data, d => d.domgross) / 10**5) / 10; // in millions, round to one decimal point
-
-  const stats = [{name: "Bechdel Test Pass Rate", value: `${passRate}%`},
-                 {name: "Average IMDb Rating", value: avgIMDbRating},
-                 {name: "Average Domestic Box Office Gross", value: `$${avgDomGross}M`}];
-                //  {name: "Number of Movies", value:activeData.length}];
-
-  const container = d3.select('div#stats');
-  container.selectAll('div#statvalue')
-    .data(stats)
-    .join('div')
-    .attr('class', 'statvalue')
-    .style('width', 100 / 3 + '%')
-    .style('display', 'flex')
-    .style('justify-content', 'center')
-    .style('font-size', '36px')
-    .text(d => d.value);
-  container.selectAll('div#statname')
-    .data(stats)
-    .join('div')
-    .attr('class', 'statname')
-    .style('width', 100 / 3 + '%')
-    .style('display', 'flex')
-    .style('justify-content', 'center')
-    .text(d => d.name);
-}
-
 function make_plot(data, num) {
   $("div#vis" + num).empty(); // prevent accumulation of stats
   const margin = 200;
@@ -110,7 +74,6 @@ function make_plot(data, num) {
     .domain([0, 1, 2, 3])
     .range(["#fdbf6f", '#b2df8a', "#fb9a99", "#a6cee3"])
     
-
   // set the dimensions and margins of the graph
   var width = 1000,
       height = 700,
@@ -136,17 +99,13 @@ function make_plot(data, num) {
 
   yAxis = g => g
       .attr("text-anchor", "middle")
-      // .call(g => g.append("text")
-      //     .attr("y", d => -y(y.ticks(5).pop()))
-      //     .attr("dy", "-1em"))
-          // .text("Bechdel Test Score"))
       .call(g => g.selectAll("g")
         .data(y.ticks(4))
         .join("g")
           .attr("fill", "none")
           .call(g => g.append("circle")
               .attr("stroke", "#000")
-              .attr("stroke-opacity", 0.5)
+              .attr("stroke-opacity", 0.2)
               .attr("r", y))
           .call(g => g.append("text")
               .attr("y", d => -y(d))
@@ -159,7 +118,6 @@ function make_plot(data, num) {
               .attr("stroke", "none")))
 
 // d3 is not sure what is being entered + being updated perhaps
-
   arc = d3.arc()
     .innerRadius(innerRadius)
     .outerRadius(d => y(parseInt(d.rating)))
@@ -184,7 +142,6 @@ function make_plot(data, num) {
       .attr("d", arc)
       .on("contextmenu", openContextMenu1)
       .each(function(d) {this._current = d})
-
       // .transition().duration(750).attrTween("d", arcTween)
 
   svg.selectAll("path")
@@ -197,17 +154,22 @@ function make_plot(data, num) {
   //   .data(data)
   //   .exit().remove()
 
-  // center percentage
 
-  const passData = data.filter(d => parseInt(d.rating) === 3);
-  const passCount = d3.count(passData, d => d.rating);
-  const passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
+  // center percentage
+  let passRate;
+  if (data.length > 0) {
+    let passData = data.filter(d => parseInt(d.rating) === 3);
+    let passCount = d3.count(passData, d => d.rating);
+    passRate = Math.round(passCount / d3.count(data, d => d.rating) * 10**3) / 10; // round to one decimal point
+  } else {
+    passRate = 0
+  }
+  
 
   svg.append("text")
     .attr("text-anchor", "middle")
     .attr('y', -8)
     .attr('font-size', '2em')
-    // .attr('width', innerRadius * 2)
     .text(`${passRate}%`)
 
     svg.append("text")
