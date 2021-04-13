@@ -313,7 +313,7 @@ const menu = new ContextMenu({
 const menu1 = new ContextMenu({
       'theme': 'default', // or 'blue'
       'items': [
-        {'icon': 'minus-square', 'name': 'delete',  action: () => removeElement()  },
+        {'icon': 'minus-square', 'name': 'Delete',  action: () => removeElement()  },
         {'icon': 'sort', 'name': 'Toggle Sort',  action: () => sortData()  },
         {'icon': 'trash',    'name': 'Clear', action: () => clearData() },
       ]
