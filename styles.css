@@ -1,3 +1,5 @@
+
+
 h1 {
     /* font-family: 'Montserrat', sans-serif; */
     font-family: 'Cutive Mono', monospace;
@@ -8,6 +10,7 @@ h1 {
     display: flex;
     justify-content: center;
     font-size: 60px;
+    margin-bottom: -5px
 }
 
 #question {
@@ -23,6 +26,16 @@ h2, h3, p, li, div, select {
 p, li {
   font-size: 18px;
 }
+
+img {
+  transition:transform 0.7s ease;
+}
+
+img:hover {
+  -webkit-transform:scale(1.25); /* or some other value */
+  transform:scale(1.25);
+}
+
 .ui-autocomplete {
     position: absolute;
     top: 100%;
@@ -95,7 +108,8 @@ p, li {
 #comic_explanation {
     padding-top: 100px;
     padding-left: 10%;
-    width: 50%;
+    padding-right: 5%;
+    width: 45%;
 }
 
 #comic {
@@ -145,10 +159,10 @@ p, li {
 }
 
 button {
-    width: 45%;
+    width: 100%;
     /* font-family: 'Work Sans', sans-serif; */
     font-family: 'Cutive Mono', monospace;
-
+    /* border-radius: 5px; */
     font-size: 16px;
     padding: 4px;
 }
