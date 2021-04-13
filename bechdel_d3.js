@@ -303,7 +303,6 @@ function openContextMenu1(evt){
   evt.preventDefault();
   //pre-remove the
   menu1.selected = (currentData.indexOf(evt.target.__data__));
-  console.log(evt);
   // open the menu with a delay
   const time = menu1.isOpen() ? 100 : 0;
 
