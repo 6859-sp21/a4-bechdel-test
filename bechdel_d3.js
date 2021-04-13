@@ -4,12 +4,8 @@
 d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
   all_genre_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
   activeData = [];
-  currentData = all_genre_data.slice(1600)
   unsortedData = [];
   sorted = false;
-
-  // generic loading in
-  make_plot(all_genre_data.slice(1600), 0)
 
   document.getElementById('genre_select1').value = "Animation";
   change_genre(1);
@@ -21,6 +17,10 @@ d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.
 
 d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAllMovies.json").then((bechdelData1) => {
    all_search_data = bechdelData1;
+   all_search_data.sort(function(x, y){
+    return d3.ascending(x.year, y.year);
+   })
+   make_plot(all_search_data.slice(8880), 0);
 
    // Make a list of Movie Names for Search
    movie_names = []
