@@ -146,7 +146,7 @@ function make_plot(data, num) {
           .attr("fill", "none")
           .call(g => g.append("circle")
               .attr("stroke", "#000")
-              .attr("stroke-opacity", 0.5)
+              .attr("stroke-opacity", 0.2)
               .attr("r", y))
           .call(g => g.append("text")
               .attr("y", d => -y(d))
