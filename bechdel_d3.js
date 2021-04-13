@@ -294,9 +294,11 @@ function clearData() {
   activeData = [];
   (activeData);
   get_user_movies();
+  make_plot(activeData, 0);
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
+  get_user_movies();
   make_plot(currentData, 0)
 }
 

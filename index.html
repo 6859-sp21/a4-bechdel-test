@@ -31,9 +31,9 @@
     <div id="container">
       <div id="vis0"></div>
       <div id="placeholder">
-        <button onclick="toggle_explanation()">Toggle Movie List</button>
         <div id="explanation">
-          <h1>The Bechdel Test</h1>
+          <h1>What is the Bechdel Test?</h1>
+          <button onclick="toggle_explanation()">Toggle Movie List</button>
           <p>The Bechdel Test is a measure of the representation of women in movies and has three components, which our visualization maps as:</p>
           <ol start="0">
             <li>The film does not pass the Bechdel Test.</li>
@@ -41,10 +41,11 @@
             <li>These women have a conversation on screen.</li>
             <li>The conversation is about something other than a man.</li>
           </ol>
-          <!-- <p>Although these requirements seem simple, many movies fail the Bechdel Test. Some don't even meet the first condition.</p> -->
+          <p>Search for your favorite movies to </p>
         </div>
         <div id="user_list">
           <h1>Your Movies</h1>
+          <button onclick="toggle_explanation()">Toggle Movie List</button>
           <ol id="user_movies"></ol>
         </div>
       </div>
