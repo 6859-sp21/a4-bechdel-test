@@ -174,3 +174,7 @@ button {
     display: flex;
     justify-content: center;
 }
+
+#genre_question {
+    padding-left: 10%;
+}
