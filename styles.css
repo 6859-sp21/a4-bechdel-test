@@ -6,6 +6,10 @@ h1 {
     font-family: 'Libre Baskerville', serif;
 }
 
+h2, h3, p, li, div, select, .ui-autocomplete, #movie_search_box, button {
+    font-family: 'Cutive Mono', monospace;
+}
+
 #title {
     display: flex;
     justify-content: center;
@@ -17,10 +21,6 @@ h1 {
     display: flex;
     justify-content: center;
     /* font-style: italic; */
-}
-
-h2, h3, p, li, div, select {
-    font-family: 'Cutive Mono', monospace;
 }
 
 p, li {
@@ -56,9 +56,6 @@ img:hover {
     -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     background-clip: padding-box;
-    /* font-family: 'Work Sans', sans-serif; */
-    font-family: 'Cutive Mono', monospace;
-
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -151,18 +148,12 @@ img:hover {
 #movie_search_box {
     width: 40%;
     font-size: 24px;
-    /* font-family: 'Work Sans', sans-serif; */
-    font-family: 'Cutive Mono', monospace;
-
     padding: 3px;
     padding-left: 10px;
 }
 
 button {
     width: 100%;
-    /* font-family: 'Work Sans', sans-serif; */
-    font-family: 'Cutive Mono', monospace;
-    /* border-radius: 5px; */
     font-size: 16px;
     padding: 4px;
 }
