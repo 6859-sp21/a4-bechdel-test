@@ -20,7 +20,8 @@ d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAll
    all_search_data.sort(function(x, y){
     return d3.ascending(x.year, y.year);
    })
-   make_plot(all_search_data.slice(8880), 0);
+   currentData = all_search_data.slice(8880);
+   make_plot(currentData, 0);
 
    // Make a list of Movie Names for Search
    movie_names = []
@@ -59,10 +60,13 @@ function find_movie(search_title){
   index = movie_names.indexOf(search_title)
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
-    activeData.push(all_search_data[index]);
-    currentData = activeData;
-    make_plot(activeData, 0);
-    get_user_movies()
+    if (activeData.indexOf(all_search_data[index]) === -1){
+      activeData.push(all_search_data[index]);
+      currentData = activeData;
+      make_plot(activeData, 0);
+      get_user_movies()
+    }
+
     $('#movie_search_box').val('');
   }
 };
@@ -73,7 +77,7 @@ function make_plot(data, num) {
   const colorScale = d3.scaleOrdinal()
     .domain([0, 1, 2, 3])
     .range(["#fdbf6f", '#b2df8a', "#fb9a99", "#a6cee3"])
-    
+
   // set the dimensions and margins of the graph
   var width = 1000,
       height = 700,
@@ -133,16 +137,24 @@ function make_plot(data, num) {
         return arc(i(t));
       };
     }
-
-  svg.selectAll("path")
-    .data(data)
-    .enter()
-    .append("path")
-      .attr("fill", d => colorScale(d.rating))
-      .attr("d", arc)
-      .on("contextmenu", openContextMenu1)
-      .each(function(d) {this._current = d})
-      // .transition().duration(750).attrTween("d", arcTween)
+  if (num === 0) {
+    svg.selectAll("path")
+      .data(data)
+      .enter()
+      .append("path")
+        .attr("fill", d => colorScale(d.rating))
+        .attr("d", arc)
+        .on("contextmenu", openContextMenu1)
+        .each(function(d) {this._current = d})
+  } else {
+    svg.selectAll("path")
+      .data(data)
+      .enter()
+      .append("path")
+        .attr("fill", d => colorScale(d.rating))
+        .attr("d", arc)
+        .each(function(d) {this._current = d})
+  }
 
   svg.selectAll("path")
     .data(data)
@@ -164,7 +176,7 @@ function make_plot(data, num) {
   } else {
     passRate = 0
   }
-  
+
 
   svg.append("text")
     .attr("text-anchor", "middle")
@@ -254,7 +266,9 @@ function get_user_movies() {
 
 function clearData() {
   activeData = [];
-  (activeData);
+  currentData = activeData;
+  unsortedData = [];
+  // (activeData);
   get_user_movies();
   make_plot(activeData, 0);
 }
