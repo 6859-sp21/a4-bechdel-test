@@ -177,4 +177,12 @@ button {
 
 #genre_question {
     padding-left: 10%;
+    padding-right: 10%;
+}
+
+footer {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  text-align: center
 }

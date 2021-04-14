@@ -21,13 +21,6 @@
       <input id='movie_search_box' type="text" placeholder="Search for a movie to add">
     </div>
 
-    <!-- <div>
-      <label><input id="sort-data" onchange="sortData()" type="checkbox"> Sort values</label>
-    </div> -->
-
-    <!-- <div id="chart" style="width:520px;height:420px;">
-    </div> -->
-
     <div id="container">
       <div id="vis0"></div>
       <div id="placeholder">
@@ -36,12 +29,12 @@
           <button onclick="toggle_explanation()">Toggle Movie List</button>
           <p>The Bechdel Test is a measure of the representation of women in movies and has three components, which our visualization maps as:</p>
           <ol start="0">
-            <li>The film does not pass the Bechdel Test.</li>
-            <li>The film contains at least two named women.</li>
-            <li>These women have a conversation on screen.</li>
-            <li>The conversation is about something other than a man.</li>
+            <li style="background-color: #fdbf6f;">The film does not pass the Bechdel Test.</li>
+            <li style="background-color: #b2df8a;">The film contains at least two named women.</li>
+            <li style="background-color: #fb9a99;">These women have a conversation on screen.</li>
+            <li style="background-color: #a6cee3;">The conversation is about something other than a man.</li>
           </ol>
-          <p>The most recent list of movies is to your left, but you should put in your favorites in to see 
+          <p>A list of fifty recent movies is visualized to your left, but you should put in your favorites in to see 
             what's going on! Don't forget to right-click for more. 
           </p>
         </div>
@@ -52,7 +45,11 @@
         </div>
       </div>
 
-      <h1 id="genre_question">How do your favorite movies compare to the following genres?</h1>
+      <div id="genre_question">
+        <h1> How do your favorite movies compare to the following genres?</h1>
+        <h3> Note that the movies displayed here are necessarily from a subset of all movies made.</h3>
+
+      </div>
       <div id="genre">
         <div class="genre_vis" id="vis1"></div>
         <div class="genre_vis" id="vis2"></div>
@@ -147,6 +144,18 @@
           can be explored, like in <a href="https://projects.fivethirtyeight.com/next-bechdel/">this FiveThirtyEight article</a>. It's a little unfair to denounce
           a particular movie for failing the test, but the overall trends regarding the Bechdel Test do indicate that film industry has ways to go with fair representation. 
         </p>
+        <p>We used <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-03-09/readme.md">the FiveThirtyEight dataset</a> as well
+           as <a href="https://bechdeltest.com/api/v1/doc">the general Bechdel Test dataset</a>, and much of our work was inspired by 
+        <a href="https://observablehq.com/@d3/radial-stacked-bar-chart">this Observable notebook.</a> Other sources of inspiration and interesting things we discovered along the way are listed below:
+        <ul>
+          <li><a href="https://bechdeltest.com/">The Bechdel Test homebase, with an active database and easy-to-use API</a></li>
+          <li><a href="https://pudding.cool/2017/03/bechdel/">The Pudding's deep dive into the intracies of this test</a></li>
+          <li><a href="https://www.vox.com/2016/3/22/11285226/bechdel-test-cw">A Vox article detailing the origin and limitations of the test</a></li>
+        </ul>
+
+      
+      
+      </p>
 
       </div>
       <div id="comic">
@@ -159,4 +168,9 @@
     <script src='bechdel_d3.js'></script>
 
   </body>
+  <footer>
+    <p>Created by Allan Garcia-Zych, Jodi Huang, Tanya Yang <br>
+      6.859 Spring 2021 <br>
+      🏂🏻🥳🤠</p>
+  </footer>
 </html>
