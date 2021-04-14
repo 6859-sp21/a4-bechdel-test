@@ -3,9 +3,8 @@
 // let url = "https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv"
 d3.csv("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/movies.csv").then((bechdelData) => {
   all_genre_data = bechdelData.filter(d => parseInt(d.rating) !== -1);
-  activeData = [];
-  unsortedData = [];
   sorted = false;
+  default_data = true;
 
   document.getElementById('genre_select1').value = "Animation";
   change_genre(1);
@@ -21,6 +20,9 @@ d3.json("https://raw.githubusercontent.com/6859-sp21/a4-bechdel-test/main/getAll
     return d3.ascending(x.year, y.year);
    })
    currentData = all_search_data.slice(8880);
+   currentData.sort(function(x, y){
+    return d3.ascending(x.id, y.id);
+   })
    make_plot(currentData, 0);
 
    // Make a list of Movie Names for Search
@@ -60,10 +62,15 @@ function find_movie(search_title){
   index = movie_names.indexOf(search_title)
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
-    if (activeData.indexOf(all_search_data[index]) === -1){
-      activeData.push(all_search_data[index]);
-      currentData = activeData;
-      make_plot(activeData, 0);
+    if (currentData.indexOf(all_search_data[index]) === -1){
+      if (default_data) {
+        currentData = [];
+        default_data = false;
+      }
+      currentData.push(all_search_data[index]);
+      sorted = true;
+      sortData();
+      make_plot(currentData, 0);
       get_user_movies()
     }
 
@@ -228,16 +235,17 @@ function make_plot(data, num) {
 
 function sortData() {
   if (!sorted) { // sort
-    unsortedData = [...currentData];
     sorted = true;
     currentData.sort(function(x, y){
       return d3.ascending(x.rating, y.rating);
     })
     make_plot(currentData, 0);
   } else { // time to unsort
-    currentData = unsortedData
     sorted=false;
-    make_plot(unsortedData, 0)
+    currentData.sort(function(x, y){
+      return d3.ascending(x.id, y.id);
+    })
+    make_plot(currentData, 0)
   }
 }
 
@@ -259,24 +267,18 @@ function get_user_movies() {
 
   const container = d3.select('ol#user_movies');
   container.selectAll('li')
-    .data(activeData)
+    .data(currentData)
     .join('li')
     .text(d => d.title + ', ' + d.year);
 }
 
 function clearData() {
-  activeData = [];
-  currentData = activeData;
-  unsortedData = [];
-  // (activeData);
+  currentData = [];
   get_user_movies();
-  make_plot(activeData, 0);
+  make_plot(currentData, 0);
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
-  if (menu1.selectedUnsorted != -1) {
-    unsortedData.splice(menu1.selectedUnsorted, 1);
-  }
   get_user_movies();
   make_plot(currentData, 0)
 }
@@ -306,7 +308,6 @@ function openContextMenu1(evt){
   evt.preventDefault();
   //pre-remove the
   menu1.selected = (currentData.indexOf(evt.target.__data__));
-  menu1.selectedUnsorted = (unsortedData.indexOf(evt.target.__data__))
   // open the menu with a delay
   const time = menu1.isOpen() ? 100 : 0;
 
