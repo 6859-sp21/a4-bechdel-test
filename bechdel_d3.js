@@ -274,6 +274,9 @@ function clearData() {
 }
 function removeElement() {
   currentData.splice(menu1.selected, 1);
+  if (menu1.selectedUnsorted != -1) {
+    unsortedData.splice(menu1.selectedUnsorted, 1);
+  }
   get_user_movies();
   make_plot(currentData, 0)
 }
@@ -303,6 +306,7 @@ function openContextMenu1(evt){
   evt.preventDefault();
   //pre-remove the
   menu1.selected = (currentData.indexOf(evt.target.__data__));
+  menu1.selectedUnsorted = (unsortedData.indexOf(evt.target.__data__))
   // open the menu with a delay
   const time = menu1.isOpen() ? 100 : 0;
 
