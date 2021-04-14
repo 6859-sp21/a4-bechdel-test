@@ -61,6 +61,7 @@ function find_movie(search_title){
   if (index != -1){
     //add the movie to the active list and re generate visualization/stats
     if (activeData.indexOf(all_search_data[index]) === -1){
+      sorted = false;
       activeData.push(all_search_data[index]);
       currentData = activeData;
       make_plot(activeData, 0);
@@ -277,6 +278,7 @@ function removeElement() {
   if (menu1.selectedUnsorted != -1) {
     unsortedData.splice(menu1.selectedUnsorted, 1);
   }
+  activeData = currentData;
   get_user_movies();
   make_plot(currentData, 0)
 }
